@@ -1,4 +1,4 @@
-package com.example.lensai.view.fragment;
+package com.example.lensai.view.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,9 +15,8 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash); // nếu có layout, không thì dùng activity_main tạm
+        setContentView(R.layout.activity_splash);
 
-        // Chuyển sang MainActivity sau 1.5 giây
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();

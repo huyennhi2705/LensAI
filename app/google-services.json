@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "145161618226",
+    "project_id": "lensai-97dc7",
+    "storage_bucket": "lensai-97dc7.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:145161618226:android:e4f495c4779496f478cd2b",
+        "android_client_info": {
+          "package_name": "com.example.lensai"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVeFDfH4xO7yMKMCldOZcaM9wtBANmXd0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

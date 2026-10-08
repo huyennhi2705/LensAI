@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="120dp"
+    android:height="120dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- vòng sáng ngoài -->
+    <path android:fillColor="#26FFFFFF"
+        android:pathData="M60,60m-50,0a50,50 0 1,0 100,0a50,50 0 1,0 -100,0" />
+    <!-- viền ống kính -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M60,60m-40,0a40,40 0 1,0 80,0a40,40 0 1,0 -80,0" />
+    <path android:fillColor="#1E3A8A"
+        android:pathData="M60,60m-31,0a31,31 0 1,0 62,0a31,31 0 1,0 -62,0" />
+    <path android:fillColor="#3B82F6"
+        android:pathData="M60,60m-21,0a21,21 0 1,0 42,0a21,21 0 1,0 -42,0" />
+    <path android:fillColor="#0F172A"
+        android:pathData="M60,60m-11,0a11,11 0 1,0 22,0a11,11 0 1,0 -22,0" />
+    <!-- ánh phản chiếu -->
+    <path android:fillColor="#CCFFFFFF"
+        android:pathData="M50,50m-5,0a5,5 0 1,0 10,0a5,5 0 1,0 -10,0" />
+    <path android:fillColor="#66FFFFFF"
+        android:pathData="M69,67m-2.5,0a2.5,2.5 0 1,0 5,0a2.5,2.5 0 1,0 -5,0" />
+    <!-- 4 góc khung quét -->
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="4" android:strokeLineCap="round"
+        android:pathData="M6,24 L6,6 L24,6" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="4" android:strokeLineCap="round"
+        android:pathData="M96,6 L114,6 L114,24" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="4" android:strokeLineCap="round"
+        android:pathData="M6,96 L6,114 L24,114" />
+    <path android:strokeColor="#FFFFFF" android:strokeWidth="4" android:strokeLineCap="round"
+        android:pathData="M114,96 L114,114 L96,114" />
+</vector>

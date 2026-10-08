@@ -1,19 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item
-        android:id="@+id/nav_scan"
-        android:icon="@drawable/camera"
-        android:title="scan" />
-    <item
-        android:id="@+id/nav_history"
-        android:icon="@drawable/history"
-        android:title="history" />
-    <item
-        android:id="@+id/nav_statistics"
-        android:icon="@drawable/statistics"
-        android:title="statistics" />
-    <item
-        android:id="@+id/nav_settings"
-        android:icon="@drawable/settings"
-        android:title="settings" />
+    <item android:id="@+id/nav_home" android:title="Home" android:icon="@drawable/home" />
+    <item android:id="@+id/nav_scan" android:title="Scan" android:icon="@drawable/camera" />
+    <item android:id="@+id/nav_history" android:title="History" android:icon="@drawable/history" />
+    <item android:id="@+id/nav_statistics" android:title="Statistics" android:icon="@drawable/statistics" />
+    <item android:id="@+id/nav_settings" android:title="Settings" android:icon="@drawable/settings" />
+
 </menu>
