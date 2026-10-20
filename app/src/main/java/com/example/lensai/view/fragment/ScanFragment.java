@@ -1,9 +1,8 @@
 package com.example.lensai.view.fragment;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.lensai.R;
+import com.example.lensai.ml.YoloDetector;
 import com.example.lensai.model.AIResult;
 import com.example.lensai.model.ScanHistory;
 import com.example.lensai.repository.HistoryRepository;
@@ -38,7 +38,8 @@ import java.util.List;
 
 public class ScanFragment extends Fragment {
 
-    private static final int MODEL_SIZE = 224; // kích thước model
+    private static final String TAG = "ScanFragment";
+    private static final float MIN_CONFIDENCE = 0.55f;
 
     private PreviewView previewView;
     private ImageView ivResult;
@@ -53,7 +54,7 @@ public class ScanFragment extends Fragment {
     private HistoryRepository historyRepo;
 
     private File lastPhotoFile;
-    private Bitmap lastCroppedBitmap; // ảnh 224x224 đã cắt từ khung
+    private Bitmap lastCroppedBitmap;
     private AIResult bestResult;
     private String lastSpokenText = "";
 
@@ -75,7 +76,9 @@ public class ScanFragment extends Fragment {
 
         btnCapture.setOnClickListener(view -> takePhoto());
         btnSpeak.setOnClickListener(view -> {
-            if (!lastSpokenText.isEmpty()) tts.speak(lastSpokenText);
+            if (!lastSpokenText.isEmpty()) {
+                tts.speak(lastSpokenText);
+            }
         });
         if (btnSave != null) {
             btnSave.setOnClickListener(view -> saveCurrentResult());
@@ -105,12 +108,13 @@ public class ScanFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (aiService != null) aiService.release();
-        if (tts != null) tts.shutdown();
-        if (lastCroppedBitmap != null && !lastCroppedBitmap.isRecycled()) {
-            lastCroppedBitmap.recycle();
-            lastCroppedBitmap = null;
+        if (aiService != null) {
+            aiService.release();
         }
+        if (tts != null) {
+            tts.shutdown();
+        }
+        lastCroppedBitmap = null;
     }
 
     private void startCamera() {
@@ -138,7 +142,7 @@ public class ScanFragment extends Fragment {
                         imageCapture
                 );
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Mở camera lỗi", e);
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
@@ -159,12 +163,17 @@ public class ScanFragment extends Fragment {
         btnCapture.setEnabled(false);
         tvResult.setText("Đang nhận dạng...");
 
-        imageCapture.takePicture(options,
+        imageCapture.takePicture(
+                options,
                 ContextCompat.getMainExecutor(requireContext()),
                 new ImageCapture.OnImageSavedCallback() {
+
                     @Override
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
-                        Bitmap fullBitmap = BitmapFactory.decodeFile(lastPhotoFile.getAbsolutePath());
+                        if (!isAdded()) return;
+
+                        // Đọc ảnh + xoay đúng chiều theo EXIF
+                        Bitmap fullBitmap = YoloDetector.decodeFileWithExif(lastPhotoFile.getAbsolutePath());
                         if (fullBitmap == null) {
                             progress.setVisibility(View.GONE);
                             btnCapture.setEnabled(true);
@@ -172,25 +181,22 @@ public class ScanFragment extends Fragment {
                             return;
                         }
 
-                        // === CẮT VÙNG TRONG KHUNG + RESIZE 224x224 ===
-                        Bitmap cropped224 = cropCenterSquareAndResize(fullBitmap, MODEL_SIZE);
-                        fullBitmap.recycle(); // giải phóng ảnh gốc
-
-                        lastCroppedBitmap = cropped224;
-
-                        // Hiện ảnh đã cắt lên UI
-                        ivResult.setImageBitmap(cropped224);
+                        lastCroppedBitmap = fullBitmap;
+                        ivResult.setImageBitmap(fullBitmap);
                         ivResult.setVisibility(View.VISIBLE);
 
-                        // Đưa ảnh 224x224 vào model
-                        aiService.analyze(cropped224,
+                        // Gửi ảnh vào AIService (YOLO)
+                        aiService.analyze(fullBitmap,
                                 results -> {
+                                    if (!isAdded()) return;
                                     progress.setVisibility(View.GONE);
                                     btnCapture.setEnabled(true);
                                     showResults(results);
                                     autoSave(results);
                                 },
                                 e -> {
+                                    if (!isAdded()) return;
+                                    Log.e(TAG, "analyze lỗi", e);
                                     progress.setVisibility(View.GONE);
                                     btnCapture.setEnabled(true);
                                     tvResult.setText("Lỗi nhận dạng");
@@ -201,36 +207,12 @@ public class ScanFragment extends Fragment {
 
                     @Override
                     public void onError(@NonNull ImageCaptureException exception) {
+                        if (!isAdded()) return;
                         progress.setVisibility(View.GONE);
                         btnCapture.setEnabled(true);
                         Toast.makeText(requireContext(), "Chụp ảnh thất bại", Toast.LENGTH_SHORT).show();
                     }
                 });
-    }
-
-    /**
-     * Cắt vùng vuông ở giữa ảnh (tương ứng khung bao trên PreviewView),
-     * sau đó resize thành size x size (224x224).
-     */
-    private Bitmap cropCenterSquareAndResize(Bitmap source, int size) {
-        int width = source.getWidth();
-        int height = source.getHeight();
-
-        // Lấy cạnh ngắn hơn → cắt hình vuông giữa
-        int edge = Math.min(width, height);
-        int left = (width - edge) / 2;
-        int top = (height - edge) / 2;
-
-        Bitmap square = Bitmap.createBitmap(source, left, top, edge, edge);
-
-        // Resize về 224x224
-        Bitmap resized = Bitmap.createScaledBitmap(square, size, size, true);
-
-        if (square != source && square != resized) {
-            square.recycle();
-        }
-
-        return resized;
     }
 
     private void showResults(List<AIResult> results) {
@@ -241,14 +223,24 @@ public class ScanFragment extends Fragment {
             return;
         }
 
-        bestResult = results.get(0);
+        // Lấy kết quả có độ tin cậy cao nhất
+        AIResult top = results.get(0);
         for (AIResult r : results) {
-            if (r.confidence > bestResult.confidence) {
-                bestResult = r;
+            if (r.confidence > top.confidence) {
+                top = r;
             }
         }
 
-        // Trong showResults
+        if (top.confidence < MIN_CONFIDENCE) {
+            tvResult.setText("Chưa chắc chắn (" + String.format("%.0f%%", top.confidence * 100)
+                    + "). Hãy chụp gần hơn, rõ hơn và đủ sáng.");
+            lastSpokenText = "";
+            bestResult = null;
+            return;
+        }
+
+        bestResult = top;
+
         String englishName = ObjectDescriptionHelper.getEnglishName(bestResult.label);
         bestResult.label = englishName;
 
@@ -260,7 +252,6 @@ public class ScanFragment extends Fragment {
 
         tvResult.setText(displayText);
         lastSpokenText = englishName + ". " + description;
-
 
         tts.speak(englishName);
     }
@@ -274,10 +265,17 @@ public class ScanFragment extends Fragment {
         history.type = bestResult.type;
         history.confidence = bestResult.confidence;
 
-        // Lưu ảnh đã cắt 224x224 (truyền bitmap thay vì file gốc nếu repo hỗ trợ)
         historyRepo.saveScan(history, lastCroppedBitmap,
-                unused -> Toast.makeText(requireContext(), "Đã lưu: " + history.labelEn, Toast.LENGTH_SHORT).show(),
-                e -> Toast.makeText(requireContext(), "Lưu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                unused -> {
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Đã lưu: " + history.labelEn, Toast.LENGTH_SHORT).show();
+                    }
+                },
+                e -> {
+                    if (isAdded()) {
+                        Toast.makeText(requireContext(), "Lưu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
         );
     }
 

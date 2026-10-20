@@ -5,8 +5,6 @@ public class AIResult {
     public float confidence;
     public String type;
 
-    public AIResult() {}
-
     public AIResult(String label, float confidence, String type) {
         this.label = label;
         this.confidence = confidence;
