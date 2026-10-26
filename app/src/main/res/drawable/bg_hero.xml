@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Đặt vào res/drawable/bg_hero.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <gradient
+        android:angle="135"
+        android:endColor="#7C3AED"
+        android:startColor="#2563EB"
+        android:type="linear" />
+    <corners android:radius="28dp" />
+</shape>

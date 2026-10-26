@@ -9,23 +9,20 @@ public class TextToSpeechHelper {
     private boolean ready = false;
 
     public TextToSpeechHelper(Context context) {
-        tts = new TextToSpeech(context, status -> {
+        tts = new TextToSpeech(context.getApplicationContext(), status -> {
             if (status == TextToSpeech.SUCCESS) {
-                tts.setLanguage(Locale.US);
+                int r = tts.setLanguage(Locale.US);   // American English
+                ready = r != TextToSpeech.LANG_MISSING_DATA
+                        && r != TextToSpeech.LANG_NOT_SUPPORTED;
                 tts.setSpeechRate(0.95f);
-                ready = true;
+                tts.setPitch(1.0f);
             }
         });
     }
 
     public void speak(String text) {
-        if (ready && text != null && !text.isEmpty()) {
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "LensAI");
-        }
-    }
-
-    public void setSpeechRate(float rate) {
-        if (tts != null) tts.setSpeechRate(rate);
+        if (!ready || text == null || text.isEmpty()) return;
+        tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "lensai_utt");
     }
 
     public void shutdown() {

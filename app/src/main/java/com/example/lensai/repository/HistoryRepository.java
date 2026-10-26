@@ -10,7 +10,6 @@ import androidx.annotation.Nullable;
 import com.example.lensai.model.ScanHistory;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
 
@@ -21,41 +20,50 @@ import java.util.Map;
 public class HistoryRepository {
 
     private static final String TAG = "HistoryRepo";
-    private static final String COLLECTION = "scans";
+    public static final String COLLECTION = "scans";
+    private static final int MAX_IMAGE_SIZE = 480;
 
     private final FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-    /**
-     * Lưu kết quả scan + ảnh 224x224 (Base64) lên Firestore.
-     * Không cần đăng nhập.
-     */
     public void saveScan(@NonNull ScanHistory history,
-                         @Nullable Bitmap image224,
+                         @Nullable Bitmap image,
                          @Nullable OnSuccessListener<Void> onSuccess,
                          @Nullable OnFailureListener onFailure) {
 
         history.timestamp = System.currentTimeMillis();
 
         Map<String, Object> data = new HashMap<>();
-        data.put("labelEn", history.labelEn != null ? history.labelEn : "");
-        data.put("description", history.description != null ? history.description : "");
-        data.put("type", history.type != null ? history.type : "");
+
+        // Thông tin cũ
+        data.put("labelEn", nz(history.labelEn));
+        data.put("labelVi", nz(history.labelVi));
+        data.put("description", nz(history.description));
+        data.put("descriptionEn", nz(history.descriptionEn));
+        data.put("descriptionVi", nz(history.descriptionVi));
+        data.put("category", history.category != null ? history.category : "other");
+        data.put("type", nz(history.type));
         data.put("confidence", history.confidence);
         data.put("timestamp", history.timestamp);
 
-        // Ảnh 224x224 → Base64 (nếu có)
-        if (image224 != null && !image224.isRecycled()) {
-            String base64 = bitmapToBase64(image224);
-            data.put("imageBase64", base64);
+        // ===== MỚI =====
+        data.put("objectCount", history.objectCount);
+        data.put("objectsListEn", nz(history.objectsListEn));
+        data.put("objectsListVi", nz(history.objectsListVi));
+        // ===============
+
+        if (image != null && !image.isRecycled()) {
+            data.put("imageBase64", bitmapToBase64(image));
         } else {
-            data.put("imageBase64", null);
+            data.put("imageBase64", "");
         }
 
         db.collection(COLLECTION)
                 .add(data)
                 .addOnSuccessListener(docRef -> {
                     history.id = docRef.getId();
-                    Log.d(TAG, "Saved scan: " + history.id);
+                    Log.d(TAG, "Saved scan: " + history.id
+                            + " | count=" + history.objectCount
+                            + " | objects=" + history.objectsListEn);
                     if (onSuccess != null) onSuccess.onSuccess(null);
                 })
                 .addOnFailureListener(e -> {
@@ -63,25 +71,19 @@ public class HistoryRepository {
                     if (onFailure != null) onFailure.onFailure(e);
                 });
     }
-
-    /**
-     * Lấy danh sách lịch sử (mới nhất trước).
-     */
+    /** Newest first. */
     public Query getHistoryQuery() {
         return db.collection(COLLECTION)
                 .orderBy("timestamp", Query.Direction.DESCENDING);
     }
 
-    /**
-     * Xóa 1 bản ghi theo id.
-     */
     public void deleteScan(@NonNull String id,
                            @Nullable OnSuccessListener<Void> onSuccess,
                            @Nullable OnFailureListener onFailure) {
         db.collection(COLLECTION)
                 .document(id)
                 .delete()
-                .addOnSuccessListener(aVoid -> {
+                .addOnSuccessListener(unused -> {
                     Log.d(TAG, "Deleted: " + id);
                     if (onSuccess != null) onSuccess.onSuccess(null);
                 })
@@ -91,13 +93,52 @@ public class HistoryRepository {
                 });
     }
 
-    // ---------- Helper ----------
+    /** Loads one record by id. */
+    public void getScan(@NonNull String id,
+                        @NonNull OnSuccessListener<ScanHistory> onSuccess,
+                        @Nullable OnFailureListener onFailure) {
+        db.collection(COLLECTION)
+                .document(id)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    ScanHistory item = doc.toObject(ScanHistory.class);
+                    if (item == null) {
+                        if (onFailure != null) {
+                            onFailure.onFailure(new Exception("Record not found"));
+                        }
+                        return;
+                    }
+                    item.id = doc.getId();
+                    onSuccess.onSuccess(item);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Load failed", e);
+                    if (onFailure != null) onFailure.onFailure(e);
+                });
+    }
 
-    private String bitmapToBase64(Bitmap bitmap) {
+    // ---------- Helpers ----------
+
+    private static String nz(String s) {
+        return s != null ? s : "";
+    }
+
+    private String bitmapToBase64(Bitmap source) {
+        Bitmap scaled = source;
+        int w = source.getWidth();
+        int h = source.getHeight();
+        float ratio = Math.min((float) MAX_IMAGE_SIZE / w, (float) MAX_IMAGE_SIZE / h);
+        if (ratio < 1f) {
+            scaled = Bitmap.createScaledBitmap(source,
+                    Math.round(w * ratio), Math.round(h * ratio), true);
+        }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        // 224x224 nên chất lượng 75 là đủ
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 75, baos);
-        byte[] bytes = baos.toByteArray();
-        return Base64.encodeToString(bytes, Base64.DEFAULT);
+        scaled.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+
+        if (scaled != source) {
+            scaled.recycle();
+        }
+        return Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
     }
 }

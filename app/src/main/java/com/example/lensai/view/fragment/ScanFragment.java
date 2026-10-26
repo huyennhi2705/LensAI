@@ -23,6 +23,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.example.lensai.R;
+import com.example.lensai.ml.GeminiRecognitionEngine;
 import com.example.lensai.ml.YoloDetector;
 import com.example.lensai.model.AIResult;
 import com.example.lensai.model.ScanHistory;
@@ -33,7 +34,11 @@ import com.example.lensai.utils.PermissionUtils;
 import com.example.lensai.utils.TextToSpeechHelper;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ScanFragment extends Fragment {
@@ -41,48 +46,81 @@ public class ScanFragment extends Fragment {
     private static final String TAG = "ScanFragment";
     private static final float MIN_CONFIDENCE = 0.55f;
 
+
+
     private PreviewView previewView;
     private ImageView ivResult;
-    private TextView tvResult;
+    private TextView tvResult, tvStatus;
     private ProgressBar progress;
-    private Button btnCapture, btnSpeak, btnSave;
+    private Button btnCapture, btnSpeak, btnSave, btnTranslate;
 
     private ImageCapture imageCapture;
     private ProcessCameraProvider cameraProvider;
     private AIService aiService;
     private TextToSpeechHelper tts;
     private HistoryRepository historyRepo;
+    private GeminiRecognitionEngine geminiEngine;
 
     private File lastPhotoFile;
     private Bitmap lastCroppedBitmap;
     private AIResult bestResult;
     private String lastSpokenText = "";
 
+    // Recognition result (English first, Vietnamese on demand)
+    private String nameEn = "";
+    private String nameVi = "";
+    private String descEn = "";
+    private String descVi = "";
+    private String category = "other";
+    private float confidence = 0f;
+    private boolean showingVietnamese = false;
+    private boolean savedCurrent = false;
+
+    // ========== BỔ SUNG MỚI ==========
+    private int objectCount = 0;
+    private String objectsListEn = "";
+    private String objectsListVi = "";
+    private final List<String> objectNamesEn = new ArrayList<>();
+    private final List<String> objectNamesVi = new ArrayList<>();
+    // =================================
+
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_scan, container, false);
 
         previewView = v.findViewById(R.id.previewView);
         ivResult = v.findViewById(R.id.ivResult);
         tvResult = v.findViewById(R.id.tvResult);
+        tvStatus = v.findViewById(R.id.tvStatus);
         progress = v.findViewById(R.id.progress);
         btnCapture = v.findViewById(R.id.btnCapture);
         btnSpeak = v.findViewById(R.id.btnSpeak);
         btnSave = v.findViewById(R.id.btnSave);
+        btnTranslate = v.findViewById(R.id.btnTranslate);
 
         aiService = new AIService(requireContext());
         tts = new TextToSpeechHelper(requireContext());
         historyRepo = new HistoryRepository();
 
+
         btnCapture.setOnClickListener(view -> takePhoto());
+
+        // Replay always reads English (US), whatever language is on screen
         btnSpeak.setOnClickListener(view -> {
             if (!lastSpokenText.isEmpty()) {
                 tts.speak(lastSpokenText);
             }
         });
+
         if (btnSave != null) {
             btnSave.setOnClickListener(view -> saveCurrentResult());
         }
+
+        btnTranslate.setOnClickListener(view -> {
+            showingVietnamese = !showingVietnamese;
+            renderResult();
+        });
 
         return v;
     }
@@ -142,14 +180,14 @@ public class ScanFragment extends Fragment {
                         imageCapture
                 );
             } catch (Exception e) {
-                Log.e(TAG, "Mở camera lỗi", e);
+                Log.e(TAG, "Camera error", e);
             }
         }, ContextCompat.getMainExecutor(requireContext()));
     }
 
     private void takePhoto() {
         if (imageCapture == null) {
-            Toast.makeText(requireContext(), "Camera chưa sẵn sàng", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(), "Camera is not ready", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -159,9 +197,31 @@ public class ScanFragment extends Fragment {
         ImageCapture.OutputFileOptions options =
                 new ImageCapture.OutputFileOptions.Builder(lastPhotoFile).build();
 
+        // Reset state for the new scan
+        bestResult = null;
+        savedCurrent = false;
+        showingVietnamese = false;
+        lastSpokenText = "";
+
+        // ========== BỔ SUNG MỚI: reset count + list ==========
+        objectCount = 0;
+        objectsListEn = "";
+        objectsListVi = "";
+        objectNamesEn.clear();
+        objectNamesVi.clear();
+        nameEn = "";
+        nameVi = "";
+        descEn = "";
+        descVi = "";
+        category = "other";
+        confidence = 0f;
+        // =====================================================
+
         progress.setVisibility(View.VISIBLE);
         btnCapture.setEnabled(false);
-        tvResult.setText("Đang nhận dạng...");
+        btnTranslate.setVisibility(View.GONE);
+        tvResult.setText("Recognizing...");
+        tvStatus.setText("🟡  Recognizing...");
 
         imageCapture.takePicture(
                 options,
@@ -172,12 +232,14 @@ public class ScanFragment extends Fragment {
                     public void onImageSaved(@NonNull ImageCapture.OutputFileResults output) {
                         if (!isAdded()) return;
 
-                        // Đọc ảnh + xoay đúng chiều theo EXIF
-                        Bitmap fullBitmap = YoloDetector.decodeFileWithExif(lastPhotoFile.getAbsolutePath());
+                        Bitmap fullBitmap = YoloDetector.decodeFileWithExif(
+                                lastPhotoFile.getAbsolutePath());
                         if (fullBitmap == null) {
                             progress.setVisibility(View.GONE);
                             btnCapture.setEnabled(true);
-                            Toast.makeText(requireContext(), "Không đọc được ảnh", Toast.LENGTH_SHORT).show();
+                            tvStatus.setText("🔴  Image error");
+                            Toast.makeText(requireContext(),
+                                    "Could not read the image", Toast.LENGTH_SHORT).show();
                             return;
                         }
 
@@ -185,24 +247,15 @@ public class ScanFragment extends Fragment {
                         ivResult.setImageBitmap(fullBitmap);
                         ivResult.setVisibility(View.VISIBLE);
 
-                        // Gửi ảnh vào AIService (YOLO)
+                        // YOLO runs in the background (optional)
                         aiService.analyze(fullBitmap,
-                                results -> {
-                                    if (!isAdded()) return;
-                                    progress.setVisibility(View.GONE);
-                                    btnCapture.setEnabled(true);
-                                    showResults(results);
-                                    autoSave(results);
-                                },
-                                e -> {
-                                    if (!isAdded()) return;
-                                    Log.e(TAG, "analyze lỗi", e);
-                                    progress.setVisibility(View.GONE);
-                                    btnCapture.setEnabled(true);
-                                    tvResult.setText("Lỗi nhận dạng");
-                                    Toast.makeText(requireContext(),
-                                            "Lỗi: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                                });
+                                results -> Log.d(TAG, "YOLO done: "
+                                        + (results != null ? results.size() : 0) + " objects"),
+                                e -> Log.e(TAG, "YOLO error", e)
+                        );
+
+                        // Gemini provides the main result
+                        recognizeWithGemini(fullBitmap);
                     }
 
                     @Override
@@ -210,20 +263,169 @@ public class ScanFragment extends Fragment {
                         if (!isAdded()) return;
                         progress.setVisibility(View.GONE);
                         btnCapture.setEnabled(true);
-                        Toast.makeText(requireContext(), "Chụp ảnh thất bại", Toast.LENGTH_SHORT).show();
+                        tvStatus.setText("🔴  Capture failed");
+                        Toast.makeText(requireContext(),
+                                "Capture failed", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
 
+    private void recognizeWithGemini(Bitmap bitmap) {
+        if (geminiEngine == null) return;
+
+        geminiEngine.recognize(bitmap)
+                .thenAccept(result -> {
+                    if (!isAdded()) return;
+
+                    requireActivity().runOnUiThread(() -> {
+                        progress.setVisibility(View.GONE);
+                        btnCapture.setEnabled(true);
+
+                        try {
+                            // ===== Code cũ: main_object + description =====
+                            JSONObject main = result.optJSONObject("main_object");
+                            nameEn = main != null
+                                    ? main.optString("name_en", "Unknown") : "Unknown";
+                            nameVi = main != null
+                                    ? main.optString("name_vi", "Không xác định")
+                                    : "Không xác định";
+                            descEn = result.optString("description_en",
+                                    "No description available.");
+                            descVi = result.optString("description_vi",
+                                    "Không có mô tả.");
+
+                            // ===== Code cũ: confidence + category =====
+                            category = "other";
+                            confidence = 0f;
+
+                            // ===== BỔ SUNG MỚI: object_count + list =====
+                            objectCount = result.optInt("object_count", 0);
+                            objectNamesEn.clear();
+                            objectNamesVi.clear();
+
+                            JSONArray objs = result.optJSONArray("objects");
+                            StringBuilder listEn = new StringBuilder();
+                            StringBuilder listVi = new StringBuilder();
+
+                            if (objs != null && objs.length() > 0) {
+                                // Ưu tiên độ dài mảng thực tế
+                                objectCount = objs.length();
+
+                                for (int i = 0; i < objs.length(); i++) {
+                                    JSONObject o = objs.getJSONObject(i);
+                                    String nEn = o.optString("name_en", "Unknown");
+                                    String nVi = o.optString("name_vi", "Không xác định");
+
+                                    objectNamesEn.add(nEn);
+                                    objectNamesVi.add(nVi);
+
+                                    if (i > 0) {
+                                        listEn.append(", ");
+                                        listVi.append(", ");
+                                    }
+                                    listEn.append(nEn);
+                                    listVi.append(nVi);
+
+                                    // Giữ logic cũ: lấy category + confidence của vật chính
+                                    boolean isMain = nameEn.equalsIgnoreCase(nEn);
+                                    if (i == 0 || isMain) {
+                                        category = o.optString("category", "other");
+                                        confidence = (float) o.optDouble("confidence", 0.0);
+                                        if (isMain) {
+                                            // đã khớp vật chính
+                                        }
+                                    }
+                                }
+                            }
+
+                            objectsListEn = listEn.toString();
+                            objectsListVi = listVi.toString();
+                            // =============================================
+
+                            // English first
+                            showingVietnamese = false;
+                            btnTranslate.setVisibility(View.VISIBLE);
+                            renderResult();
+                            tvStatus.setText("🟢  Done");
+
+                            // Speak: đọc số lượng + danh sách + mô tả bao quát
+                            lastSpokenText = buildSpeakText(false);
+                            tts.speak(lastSpokenText);
+
+                            bestResult = new AIResult();
+                            bestResult.label = nameEn;
+                            bestResult.confidence = confidence;
+
+                            savedCurrent = false;
+                            autoSave(null); // every result goes to history
+
+                        } catch (Exception e) {
+                            tvResult.setText("Failed to process result: " + e.getMessage());
+                            tvStatus.setText("🔴  Error");
+                            Log.e(TAG, "Parse Gemini error", e);
+                        }
+                    });
+                })
+                .exceptionally(throwable -> {
+                    if (!isAdded()) return null;
+
+                    requireActivity().runOnUiThread(() -> {
+                        progress.setVisibility(View.GONE);
+                        btnCapture.setEnabled(true);
+                        tvStatus.setText("🔴  Error");
+                        tvResult.setText("Recognition failed: " + throwable.getMessage());
+                        Log.e(TAG, "Gemini failed", throwable);
+                    });
+                    return null;
+                });
+    }
+
+    /** BỔ SUNG MỚI: text để TTS đọc */
+    private String buildSpeakText(boolean vietnamese) {
+        if (vietnamese) {
+            return "Có " + objectCount + " đồ vật. "
+                    + "Đó là: " + objectsListVi + ". "
+                    + "Vật chính: " + nameVi + ". "
+                    + descVi;
+        } else {
+            return "There are " + objectCount + " objects. "
+                    + "They are: " + objectsListEn + ". "
+                    + "Main object: " + nameEn + ". "
+                    + descEn;
+        }
+    }
+
+    /**
+     * Shows English or Vietnamese text.
+     * BỔ SUNG: hiển thị Count + Objects list + Main + Description.
+     */
+    private void renderResult() {
+        if (showingVietnamese) {
+            String text = "Số lượng: " + objectCount + "\n"
+                    + "Các đồ vật: " + objectsListVi + "\n"
+                    + "Vật chính: " + nameVi + "\n"
+                    + "Mô tả: " + descVi;
+            tvResult.setText(text);
+            btnTranslate.setText("English");
+        } else {
+            String text = "Count: " + objectCount + "\n"
+                    + "Objects: " + objectsListEn + "\n"
+                    + "Main: " + nameEn + "\n"
+                    + "Description: " + descEn;
+            tvResult.setText(text);
+            btnTranslate.setText("Translate");
+        }
+    }
+
+    // Legacy YOLO method, kept for later use
     private void showResults(List<AIResult> results) {
         if (results == null || results.isEmpty()) {
-            tvResult.setText("Không nhận dạng được vật thể nào");
+            tvResult.setText("No object recognized");
             lastSpokenText = "";
             bestResult = null;
             return;
         }
 
-        // Lấy kết quả có độ tin cậy cao nhất
         AIResult top = results.get(0);
         for (AIResult r : results) {
             if (r.confidence > top.confidence) {
@@ -232,8 +434,8 @@ public class ScanFragment extends Fragment {
         }
 
         if (top.confidence < MIN_CONFIDENCE) {
-            tvResult.setText("Chưa chắc chắn (" + String.format("%.0f%%", top.confidence * 100)
-                    + "). Hãy chụp gần hơn, rõ hơn và đủ sáng.");
+            tvResult.setText("Not sure (" + String.format("%.0f%%", top.confidence * 100)
+                    + "). Try getting closer, with better light.");
             lastSpokenText = "";
             bestResult = null;
             return;
@@ -244,13 +446,11 @@ public class ScanFragment extends Fragment {
         String englishName = ObjectDescriptionHelper.getEnglishName(bestResult.label);
         bestResult.label = englishName;
 
-        String description = ObjectDescriptionHelper.getDescription(englishName, lastCroppedBitmap);
+        String description = ObjectDescriptionHelper.getDescription(
+                englishName, lastCroppedBitmap);
 
-        String displayText = "Name: " + englishName + "\n\n"
-                + "Description: " + description + "\n\n"
-                + "Confidence: " + String.format("%.0f%%", bestResult.confidence * 100);
-
-        tvResult.setText(displayText);
+        tvResult.setText("Name: " + englishName + "\nDescription: " + description
+                + "\nConfidence: " + String.format("%.0f%%", bestResult.confidence * 100));
         lastSpokenText = englishName + ". " + description;
 
         tts.speak(englishName);
@@ -258,22 +458,43 @@ public class ScanFragment extends Fragment {
 
     private void autoSave(List<AIResult> results) {
         if (bestResult == null || lastCroppedBitmap == null) return;
+        if (savedCurrent) return;
+        savedCurrent = true;
 
         ScanHistory history = new ScanHistory();
-        history.labelEn = bestResult.label;
-        history.description = ObjectDescriptionHelper.getDescription(bestResult.label, lastCroppedBitmap);
-        history.type = bestResult.type;
-        history.confidence = bestResult.confidence;
+
+        // Thông tin cũ
+        history.labelEn = nameEn;
+        history.labelVi = nameVi;
+        history.description = descEn;
+        history.descriptionEn = descEn;
+        history.descriptionVi = descVi;
+        history.category = category;
+        history.type = category;
+        history.confidence = confidence;
+        history.timestamp = System.currentTimeMillis();
+
+        // ===== MỚI: bắt buộc gán =====
+        history.objectCount = objectCount;
+        history.objectsListEn = objectsListEn;
+        history.objectsListVi = objectsListVi;
+        // =============================
 
         historyRepo.saveScan(history, lastCroppedBitmap,
                 unused -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Đã lưu: " + history.labelEn, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(),
+                                "Saved: " + history.labelEn
+                                        + " (" + history.objectCount + " objects)",
+                                Toast.LENGTH_SHORT).show();
                     }
                 },
                 e -> {
+                    savedCurrent = false;
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Lưu thất bại: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(),
+                                "Save failed: " + e.getMessage(),
+                                Toast.LENGTH_SHORT).show();
                     }
                 }
         );
@@ -281,7 +502,13 @@ public class ScanFragment extends Fragment {
 
     private void saveCurrentResult() {
         if (bestResult == null) {
-            Toast.makeText(requireContext(), "Chưa có kết quả để lưu", Toast.LENGTH_SHORT).show();
+            Toast.makeText(requireContext(),
+                    "No result to save yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (savedCurrent) {
+            Toast.makeText(requireContext(),
+                    "Already saved in history", Toast.LENGTH_SHORT).show();
             return;
         }
         autoSave(null);
@@ -296,7 +523,8 @@ public class ScanFragment extends Fragment {
                 && grantResults[0] == android.content.pm.PackageManager.PERMISSION_GRANTED) {
             startCamera();
         } else {
-            Toast.makeText(requireContext(), "Cần quyền Camera để sử dụng", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(),
+                    "Camera permission is required", Toast.LENGTH_LONG).show();
         }
     }
 }
