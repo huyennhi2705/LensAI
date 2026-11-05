@@ -13,12 +13,9 @@ public class ObjectDescriptionHelper {
     private static final Map<String, String> SHAPE_MAP = new HashMap<>();
 
     static {
-        // Sửa tên hay bị ML Kit nhận sai
-        FIX_NAME.put("helmet", "Computer Mouse");
-        FIX_NAME.put("hat", "Computer Mouse");
+        // Chuẩn hoá tên
         FIX_NAME.put("mouse", "Computer Mouse");
         FIX_NAME.put("computer mouse", "Computer Mouse");
-        FIX_NAME.put("dau", "Computer Mouse"); // nếu model cũ trả về "Dau"
 
         // Hình dạng theo class
         SHAPE_MAP.put("computer mouse", "oval-shaped");

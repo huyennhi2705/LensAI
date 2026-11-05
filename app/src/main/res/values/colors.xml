@@ -29,4 +29,10 @@
 
     <color name="bin_recyclable">#1D9E75</color>
     <color name="bin_non_recyclable">#D85A30</color>
+    <color name="auth_primary">#2563EB</color>
+    <color name="auth_background">#FFFFFF</color>
+    <color name="auth_input_bg">#F5F7FA</color>
+    <color name="auth_input_stroke">#E2E6EC</color>
+    <color name="auth_text">#111827</color>
+    <color name="auth_hint">#6B7280</color>
 </resources>

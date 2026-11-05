@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="96"
+    android:viewportHeight="96">
+
+    <!-- Nền tròn -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,48m-46,0a46,46 0,1 1,92 0a46,46 0,1 1,-92 0" />
+
+    <!-- Khung quét 4 góc -->
+    <path
+        android:fillColor="#00000000"
+        android:pathData="M28,38V32a4,4 0,0 1,4 -4H38M58,28H64a4,4 0,0 1,4 4V38M28,58V64a4,4 0,0 0,4 4H38M58,68H64a4,4 0,0 0,4 -4V58"
+        android:strokeColor="@color/auth_primary"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:strokeWidth="4" />
+
+    <!-- Ống kính -->
+    <path
+        android:fillColor="@color/auth_primary"
+        android:pathData="M48,48m-12,0a12,12 0,1 1,24 0a12,12 0,1 1,-24 0" />
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M48,48m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+    <path
+        android:fillColor="@color/auth_primary"
+        android:pathData="M48,48m-2.5,0a2.5,2.5 0,1 1,5 0a2.5,2.5 0,1 1,-5 0" />
+</vector>

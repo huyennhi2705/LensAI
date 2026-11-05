@@ -45,11 +45,11 @@ public class HistoryRepository {
         data.put("confidence", history.confidence);
         data.put("timestamp", history.timestamp);
 
-        // ===== MỚI =====
+
         data.put("objectCount", history.objectCount);
         data.put("objectsListEn", nz(history.objectsListEn));
         data.put("objectsListVi", nz(history.objectsListVi));
-        // ===============
+        data.put("source", history.source != null ? history.source : "gemini");
 
         if (image != null && !image.isRecycled()) {
             data.put("imageBase64", bitmapToBase64(image));

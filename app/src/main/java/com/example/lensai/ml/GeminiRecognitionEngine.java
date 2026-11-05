@@ -4,236 +4,150 @@ import android.graphics.Bitmap;
 import android.util.Base64;
 import android.util.Log;
 
+import com.example.lensai.BuildConfig;
+import com.example.lensai.model.AIResult;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class GeminiRecognitionEngine {
 
-    private static final String TAG = "GeminiRecognition";
-    // Đổi sang model đang có trên Google AI Studio nếu cần
-    private static final String MODEL = "gemini-3.8-flash";
-    private static final int MAX_ATTEMPTS = 5;
+    private static final String TAG = "GeminiEngine";
+    // Gặp 404 (model bị gỡ) thì thử model kế tiếp.
+    // Cập nhật tại https://ai.google.dev/gemini-api/docs/deprecations
+    private static final String[] MODELS = {
+            "gemini-3.5-flash",
+            "gemini-3.6-flash",
+            "gemini-2.5-flash"
+    };
+    private static final String ENDPOINT =
+            "https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent";
 
-    private static final MediaType JSON =
-            MediaType.get("application/json; charset=utf-8");
-
-    private final String apiKey;
-    private final OkHttpClient client;
-    private final ExecutorService executor =
-            Executors.newSingleThreadExecutor();
-
-    public GeminiRecognitionEngine(String apiKey) {
-        this.apiKey = apiKey;
-
-        this.client = new OkHttpClient.Builder()
-                .connectTimeout(15, TimeUnit.SECONDS)   // 30 → 15
-                .readTimeout(60, TimeUnit.SECONDS)      // 120 → 60
-                .writeTimeout(30, TimeUnit.SECONDS)     // 120 → 30
-                .build();
+    public boolean isConfigured() {
+        String k = BuildConfig.GEMINI_API_KEY;
+        return k != null && !k.trim().isEmpty();
     }
 
-    public CompletableFuture<JSONObject> recognize(Bitmap bitmap) {
-        CompletableFuture<JSONObject> future = new CompletableFuture<>();
+    /** Blocking, gọi từ background thread. Kết quả chỉ chứa lớp có trong labels. */
+    public List<AIResult> recognize(Bitmap bitmap, List<String> labels) throws Exception {
+        if (!isConfigured()) throw new IOException("Chưa cấu hình GEMINI_API_KEY (local.properties)");
 
-        executor.execute(() -> {
+        String body = buildBody(bitmap, labels);
+        IOException last = null;
+
+        for (String model : MODELS) {
+            HttpURLConnection conn = null;
             try {
-                String base64Image = bitmapToBase64(bitmap);
-                String prompt = buildPrompt();
-                JSONObject body = buildRequestBody(prompt, base64Image);
-                JSONObject result = sendWithRetry(body);
-                future.complete(result);
-            } catch (Exception e) {
-                Log.e(TAG, "Gemini recognition failed", e);
-                future.completeExceptionally(e);
-            }
-        });
+                conn = (HttpURLConnection) new URL(String.format(ENDPOINT, model)).openConnection();
+                conn.setRequestMethod("POST");
+                conn.setConnectTimeout(15000);
+                conn.setReadTimeout(40000);
+                conn.setDoOutput(true);
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("x-goog-api-key", BuildConfig.GEMINI_API_KEY);
 
-        return future;
-    }
-
-    private JSONObject sendWithRetry(JSONObject body) throws Exception {
-        String url = "https://generativelanguage.googleapis.com/v1beta/models/"
-                + MODEL
-                + ":generateContent?key="
-                + apiKey;
-
-        Request request = new Request.Builder()
-                .url(url)
-                .post(RequestBody.create(body.toString(), JSON))
-                .build();
-
-        for (int attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-            try (Response response = client.newCall(request).execute()) {
-
-                if (response.isSuccessful()) {
-                    if (response.body() == null) {
-                        throw new IOException("Gemini returned an empty response body");
-                    }
-
-                    String responseText = response.body().string();
-                    JSONObject jsonResponse = new JSONObject(responseText);
-
-                    JSONArray candidates = jsonResponse.optJSONArray("candidates");
-                    if (candidates == null || candidates.length() == 0) {
-                        throw new Exception("Gemini returned no candidates");
-                    }
-
-                    JSONObject candidate = candidates.getJSONObject(0);
-                    JSONObject content = candidate.getJSONObject("content");
-                    JSONArray parts = content.getJSONArray("parts");
-
-                    String rawText = null;
-                    for (int i = 0; i < parts.length(); i++) {
-                        JSONObject part = parts.getJSONObject(i);
-                        if (part.has("text")) {
-                            rawText = part.getString("text");
-                            break;
-                        }
-                    }
-
-                    if (rawText == null || rawText.trim().isEmpty()) {
-                        throw new Exception("Gemini returned no text result");
-                    }
-
-                    return new JSONObject(cleanJson(rawText));
+                try (OutputStream os = conn.getOutputStream()) {
+                    os.write(body.getBytes(StandardCharsets.UTF_8));
                 }
 
-                int code = response.code();
-                String errorBody = response.body() != null
-                        ? response.body().string()
-                        : "No error details";
-
-                boolean retryable = code == 429 || code == 500
-                        || code == 502 || code == 503 || code == 504;
-
-                if (!retryable || attempt == MAX_ATTEMPTS) {
-                    throw new Exception("Gemini HTTP " + code + ": " + errorBody);
+                int code = conn.getResponseCode();
+                if (code == 404) {
+                    Log.w(TAG, model + " -> 404, thử model khác");
+                    last = new IOException("Model " + model + " không còn (404)");
+                    continue;
                 }
+                String resp = readAll(code >= 400 ? conn.getErrorStream() : conn.getInputStream());
+                if (code >= 400) throw new IOException("Gemini HTTP " + code + ": " + resp);
 
-                long waitSeconds = 1L << attempt;
-                Log.w(TAG, "Temporary Gemini error HTTP " + code
-                        + ". Retry " + (attempt + 1) + "/" + MAX_ATTEMPTS
-                        + " after " + waitSeconds + "s");
-                Thread.sleep(waitSeconds * 1000);
-
-            } catch (IOException e) {
-                if (attempt == MAX_ATTEMPTS) throw e;
-                long waitSeconds = 1L << attempt;
-                Log.w(TAG, "Network error. Retry " + (attempt + 1) + "/" + MAX_ATTEMPTS, e);
-                Thread.sleep(waitSeconds * 1000);
+                Log.d(TAG, "OK với model " + model);
+                return parse(resp, labels);
+            } finally {
+                if (conn != null) conn.disconnect();
             }
         }
-
-        throw new Exception("Gemini request failed");
+        throw last != null ? last : new IOException("Không gọi được Gemini");
     }
 
-    private JSONObject buildRequestBody(String prompt, String base64Image) throws Exception {
-        JSONObject inlineData = new JSONObject();
-        inlineData.put("mime_type", "image/jpeg");
-        inlineData.put("data", base64Image);
-
-        JSONObject imagePart = new JSONObject();
-        imagePart.put("inline_data", inlineData);
-
-        JSONObject textPart = new JSONObject();
-        textPart.put("text", prompt);
-
-        JSONArray parts = new JSONArray();
-        parts.put(textPart);
-        parts.put(imagePart);
-
-        JSONObject content = new JSONObject();
-        content.put("parts", parts);
-
-        JSONArray contents = new JSONArray();
-        contents.put(content);
-
-        JSONObject body = new JSONObject();
-        body.put("contents", contents);
-
-        JSONObject generationConfig = new JSONObject();
-        generationConfig.put("temperature", 0.15);
-        generationConfig.put("response_mime_type", "application/json");
-        body.put("generationConfig", generationConfig);
-
-        return body;
-    }
-
-    private String bitmapToBase64(Bitmap bitmap) {
-
-        Bitmap resized = resizeBitmap(bitmap, 1024);
-
+    private String buildBody(Bitmap bitmap, List<String> labels) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 90, baos);
+        String b64 = Base64.encodeToString(baos.toByteArray(), Base64.NO_WRAP);
 
-        resized.compress(Bitmap.CompressFormat.JPEG, 70, baos);
+        String prompt = "The image shows an object the user is pointing a camera at. "
+                + "Identify the main object(s) using ONLY names from this class list: "
+                + String.join(", ", labels) + ". "
+                + "Return JSON only: {\"objects\":[{\"name\":\"<exact name from the list>\","
+                + "\"description\":\"<one short English sentence: color, shape, typical use>\","
+                + "\"confidence\":<0..1>}]}. "
+                + "At most 3 objects, most prominent first. "
+                + "If nothing in the image matches the list, return {\"objects\":[]}.";
 
-        byte[] bytes = baos.toByteArray();
-        if (resized != bitmap) resized.recycle();
-        return Base64.encodeToString(bytes, Base64.NO_WRAP);
+        JSONObject textPart = new JSONObject().put("text", prompt);
+        JSONObject imgPart = new JSONObject().put("inline_data",
+                new JSONObject().put("mime_type", "image/jpeg").put("data", b64));
+
+        return new JSONObject()
+                .put("contents", new JSONArray().put(new JSONObject()
+                        .put("parts", new JSONArray().put(textPart).put(imgPart))))
+                .put("generationConfig", new JSONObject()
+                        .put("temperature", 0.2)
+                        .put("responseMimeType", "application/json"))
+                .toString();
     }
 
-    private Bitmap resizeBitmap(Bitmap original, int maxSize) {
-        int width = original.getWidth();
-        int height = original.getHeight();
-        float ratio = Math.min((float) maxSize / width, (float) maxSize / height);
-        if (ratio >= 1.0f) {
-            return original;
+    private List<AIResult> parse(String resp, List<String> labels) throws Exception {
+        JSONObject root = new JSONObject(resp);
+        JSONArray cands = root.optJSONArray("candidates");
+        if (cands == null || cands.length() == 0) {
+            throw new IOException("Gemini không trả kết quả (có thể bị chặn bởi safety)");
         }
-        int newWidth = Math.round(width * ratio);
-        int newHeight = Math.round(height * ratio);
-        return Bitmap.createScaledBitmap(original, newWidth, newHeight, true);
+        JSONArray parts = cands.getJSONObject(0).getJSONObject("content").getJSONArray("parts");
+        StringBuilder text = new StringBuilder();
+        for (int i = 0; i < parts.length(); i++) text.append(parts.getJSONObject(i).optString("text", ""));
+
+        String json = text.toString().trim();
+        if (json.startsWith("```")) {
+            json = json.replaceAll("^```[a-zA-Z]*", "").replaceAll("```$", "").trim();
+        }
+
+        // Đưa tên về đúng chính tả trong labels.txt, tên ngoài danh sách thì bỏ
+        Map<String, String> canonical = new HashMap<>();
+        for (String l : labels) canonical.put(l.toLowerCase(Locale.US), l);
+
+        List<AIResult> list = new ArrayList<>();
+        JSONArray arr = new JSONObject(json).optJSONArray("objects");
+        if (arr == null) return list;
+        for (int i = 0; i < arr.length(); i++) {
+            JSONObject o = arr.getJSONObject(i);
+            String name = canonical.get(o.optString("name", "").trim().toLowerCase(Locale.US));
+            if (name == null) continue;
+            AIResult r = new AIResult(name, (float) o.optDouble("confidence", 0.7), "gemini");
+            r.description = o.optString("description", "").trim();
+            list.add(r);
+        }
+        return list;
     }
 
-    /**
-     * Prompt mới: đếm số lượng + liệt kê tất cả + mô tả bao quát.
-     * Vẫn giữ main_object, description_en/vi, objects, category, confidence.
-     */
-    private String buildPrompt() {
-        return """
-            Analyze the image. Count all clearly visible objects, list them, pick the main one, and write an overall scene description.
-
-            Return ONLY this JSON (no markdown):
-            {
-              "object_count": 0,
-              "objects": [
-                {"name_en":"", "name_vi":"", "category":"object", "confidence":0.0}
-              ],
-              "main_object": {"name_en":"", "name_vi":""},
-              "description_en":"",
-              "description_vi":""
-            }
-
-            category: object|animal|plant|food|person|vehicle|furniture|electronics|other
-            confidence: 0–1. Do not invent objects.
-            """;
-    }
-
-    private String cleanJson(String text) {
-        if (text == null) {
-            return "{}";
-        }
-        text = text.trim();
-        if (text.startsWith("```json")) {
-            text = text.substring(7);
-        } else if (text.startsWith("```")) {
-            text = text.substring(3);
-        }
-        if (text.endsWith("```")) {
-            text = text.substring(0, text.length() - 3);
-        }
-        return text.trim();
+    private static String readAll(InputStream in) throws IOException {
+        if (in == null) return "";
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        byte[] buf = new byte[4096];
+        int n;
+        while ((n = in.read(buf)) > 0) out.write(buf, 0, n);
+        in.close();
+        return out.toString("UTF-8");
     }
 }

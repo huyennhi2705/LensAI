@@ -53,32 +53,6 @@
                 android:textColor="#FFFFFF"
                 android:textSize="13sp" />
 
-            <TextView
-                android:id="@+id/tvHint"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center_horizontal"
-                android:layout_marginBottom="18dp"
-                android:background="@drawable/bg_chip_dark"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:text="Center the object in the frame"
-                android:textColor="#E2E8F0"
-                android:textSize="13sp" />
-
-            <ImageView
-                android:id="@+id/ivResult"
-                android:layout_width="108dp"
-                android:layout_height="108dp"
-                android:layout_gravity="top|end"
-                android:layout_margin="16dp"
-                android:background="@drawable/bg_thumb"
-                android:contentDescription="Captured image"
-                android:elevation="8dp"
-                android:padding="3dp"
-                android:scaleType="centerCrop"
-                android:visibility="gone" />
-
             <ProgressBar
                 android:id="@+id/progress"
                 android:layout_width="68dp"
@@ -91,12 +65,13 @@
         </FrameLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- RESULT -->
+    <!-- RESULT CARD -->
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/resultCard"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="14dp"
+        android:visibility="gone"
         app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="24dp"
         app:cardElevation="5dp"
@@ -112,6 +87,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
+            <!-- Header -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -136,30 +112,49 @@
                     android:textColor="#0F172A"
                     android:textSize="16sp" />
 
+                <!-- NÚT DỊCH NGÔN NGỮ -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnTranslate"
                     style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="wrap_content"
-                    android:layout_height="40dp"
+                    android:layout_height="36dp"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:text="Translate"
                     android:textAllCaps="false"
                     android:textColor="#1D4ED8"
-                    android:textSize="13sp"
-                    android:visibility="gone"
+                    android:textSize="12sp"
+                    android:visibility="visible"
                     app:backgroundTint="#DBEAFE"
-                    app:cornerRadius="20dp"
-                    app:icon="@android:drawable/ic_menu_sort_alphabetically"
-                    app:iconGravity="textStart"
-                    app:iconPadding="6dp"
-                    app:iconSize="18dp"
-                    app:iconTint="#1D4ED8" />
+                    app:cornerRadius="18dp" />
             </LinearLayout>
 
+            <!-- VÙNG CHỨA ẢNH VÀ BOUNDING BOX -->
+            <FrameLayout
+                android:id="@+id/imageContainer"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginTop="12dp"
+                android:background="#1E293B"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/ivResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitCenter"
+                    android:contentDescription="Captured image" />
+
+                <com.example.lensai.view.BoundingBoxView
+                    android:id="@+id/boxView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </FrameLayout>
+
+            <!-- KẾT QUẢ TEXT -->
             <androidx.core.widget.NestedScrollView
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
+                android:layout_height="100dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/bg_result_area"
                 android:fillViewport="true"
@@ -175,6 +170,37 @@
                     android:textColor="#1E293B"
                     android:textSize="16sp" />
             </androidx.core.widget.NestedScrollView>
+
+            <!-- KHUNG CHAT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/etChatInput"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_result_area"
+                    android:hint="Hỏi AI về vật thể này..."
+                    android:paddingHorizontal="12dp"
+                    android:textSize="14sp"
+                    android:singleLine="true" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSendChat"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_marginStart="8dp"
+                    android:text="Gửi"
+                    android:textAllCaps="false"
+                    app:cornerRadius="24dp"
+                    app:backgroundTint="#2563EB" />
+            </LinearLayout>
+
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

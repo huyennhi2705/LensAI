@@ -9,10 +9,10 @@ public class ScanHistory {
     @Exclude
     public String id;
 
-    // Thông tin chính
+
     public String labelEn;
     public String labelVi;
-    public String description;        // giữ field cũ
+    public String description;
     public String descriptionEn;
     public String descriptionVi;
     public String category;
@@ -25,7 +25,7 @@ public class ScanHistory {
     public int objectCount;
     public String objectsListEn;
     public String objectsListVi;
-    // ================================
+    public String source;
 
     public ScanHistory() {
         // bắt buộc cho Firestore
