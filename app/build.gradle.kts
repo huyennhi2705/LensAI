@@ -81,13 +81,15 @@ dependencies {
 
     // Room (nếu muốn offline local)
     implementation("androidx.room:room-runtime:2.6.1")
-    annotationProcessor("androidx.room:rgit statusoom-compiler:2.6.1")
+    annotationProcessor("androidx.room:room-compiler:2.6.1")
 
     // Khác
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.google.guava:guava:33.3.1-android")
     implementation("androidx.exifinterface:exifinterface:1.3.7")
-
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
+    implementation("com.google.mlkit:translate:17.0.2")
+    implementation("com.google.guava:guava:32.1.2-android")
     // TensorFlow Lite
     implementation("org.tensorflow:tensorflow-lite:2.16.1")
     implementation("org.tensorflow:tensorflow-lite-support:0.4.4")

@@ -24,7 +24,7 @@ public class AuthActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
-    private boolean isLoginMode = true; // Trạng thái hiện tại: true là đăng nhập, false là đăng ký
+    private boolean isLoginMode = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -274,12 +274,13 @@ public final class HybridFusion {
         return "";
     }
 
-
+    // Hàm extractBox đã được sửa để đọc từ 4 biến tọa độ thay vì biến 'box' không tồn tại
     private static RectF extractBox(AIResult r) {
         if (r == null) return null;
         try {
-            // Ưu tiên field public thường gặp
-            if (r.box != null) return r.box;
+            if (r.xmax > 0 && r.ymax > 0) {
+                return new RectF(r.xmin, r.ymin, r.xmax, r.ymax);
+            }
         } catch (Exception ignored) {
         }
         return null;

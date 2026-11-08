@@ -4,148 +4,180 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Base64;
-import android.widget.ImageButton;
+import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.lensai.R;
 import com.example.lensai.model.ScanHistory;
 import com.example.lensai.repository.HistoryRepository;
-import com.example.lensai.utils.TextToSpeechHelper;
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 
-import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/** Trang chi tiết của một lần quét. Mở bằng intent.putExtra(EXTRA_ID, scanId). */
 public class HistoryDetailActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ID = "scan_id";
+    public static final String EXTRA_ID = "extra_scan_id";
+
+    private final HistoryRepository repo = new HistoryRepository();
 
     private ImageView ivDetail;
-    private TextView tvName, tvMeta, tvDesc, tvDescTitle;
-    private MaterialButton btnSpeak, btnTranslate;
+    private TextView tvDetailLabel, tvDetailTime, tvDetailDesc, tvDetailObjects;
+    private Chip chipCategory, chipConfidence, chipCount;
+    private Button btnDetailLang;
+    private ProgressBar progressDetail;
 
-    private TextToSpeechHelper tts;
+    private String scanId;
     private ScanHistory current;
     private boolean showingVietnamese = false;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_detail);
 
         ivDetail = findViewById(R.id.ivDetail);
-        tvName = findViewById(R.id.tvDetailName);
-        tvMeta = findViewById(R.id.tvDetailMeta);
-        tvDesc = findViewById(R.id.tvDetailDesc);
-        tvDescTitle = findViewById(R.id.tvDescTitle);
-        btnSpeak = findViewById(R.id.btnDetailSpeak);
-        btnTranslate = findViewById(R.id.btnDetailTranslate);
-        ImageButton btnBack = findViewById(R.id.btnBack);
+        tvDetailLabel = findViewById(R.id.tvDetailLabel);
+        tvDetailTime = findViewById(R.id.tvDetailTime);
+        tvDetailDesc = findViewById(R.id.tvDetailDesc);
+        tvDetailObjects = findViewById(R.id.tvDetailObjects);
+        chipCategory = findViewById(R.id.chipCategory);
+        chipConfidence = findViewById(R.id.chipConfidence);
+        chipCount = findViewById(R.id.chipCount);
+        btnDetailLang = findViewById(R.id.btnDetailLang);
+        progressDetail = findViewById(R.id.progressDetail);
 
-        tts = new TextToSpeechHelper(this); // American English (Locale.US)
-
-        btnBack.setOnClickListener(v -> finish());
-
-        btnSpeak.setOnClickListener(v -> {
-            if (current != null) {
-                tts.speak(englishText());
-            }
-        });
-
-        btnTranslate.setOnClickListener(v -> {
-            if (current == null) return;
-            showingVietnamese = !showingVietnamese;
-            render();
-        });
-
-        String id = getIntent().getStringExtra(EXTRA_ID);
-        if (id == null) {
-            Toast.makeText(this, "Record not found", Toast.LENGTH_SHORT).show();
+        scanId = getIntent().getStringExtra(EXTRA_ID);
+        if (scanId == null || scanId.isEmpty()) {
             finish();
             return;
         }
 
-        new HistoryRepository().getScan(id,
+        findViewById(R.id.btnBack).setOnClickListener(v -> finish());
+        findViewById(R.id.btnDelete).setOnClickListener(v -> confirmDelete());
+        btnDetailLang.setOnClickListener(v -> {
+            showingVietnamese = !showingVietnamese;
+            render();
+        });
+
+        load();
+    }
+
+    private boolean gone() {
+        return isFinishing() || isDestroyed();
+    }
+
+    private void load() {
+        progressDetail.setVisibility(View.VISIBLE);
+        repo.getScan(scanId,
                 item -> {
+                    if (gone()) return;
+                    progressDetail.setVisibility(View.GONE);
                     current = item;
-                    showImage(item.imageBase64);
+                    bindImage(item.imageBase64);
                     render();
                 },
                 e -> {
-                    Toast.makeText(this, "Could not load details: " + e.getMessage(),
+                    if (gone()) return;
+                    progressDetail.setVisibility(View.GONE);
+                    Toast.makeText(this,
+                            "Không tải được chi tiết: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                     finish();
                 });
     }
 
-    private String nameEn() {
-        return current.labelEn != null && !current.labelEn.isEmpty() ? current.labelEn : "Unknown";
-    }
-
-    private String descEn() {
-        if (current.descriptionEn != null && !current.descriptionEn.isEmpty()) return current.descriptionEn;
-        if (current.description != null && !current.description.isEmpty()) return current.description;
-        return "No description available.";
-    }
-
-    /** What the speaker reads: always English. */
-    private String englishText() {
-        return nameEn() + ". " + descEn();
-    }
-
-    private void render() {
-        if (showingVietnamese) {
-            String nameVi = current.labelVi != null && !current.labelVi.isEmpty()
-                    ? current.labelVi : nameEn();
-            String descVi = current.descriptionVi != null && !current.descriptionVi.isEmpty()
-                    ? current.descriptionVi : "Chưa có bản dịch cho mục này.";
-            tvName.setText(nameVi);
-            tvDesc.setText(descVi);
-            tvDescTitle.setText("Mô tả");
-            btnTranslate.setText("English");
-        } else {
-            tvName.setText(nameEn());
-            tvDesc.setText(descEn());
-            tvDescTitle.setText("Description");
-            btnTranslate.setText("Translate");
-        }
-
-        String category = current.category != null && !current.category.isEmpty()
-                ? current.category : "other";
-        String time = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.SHORT, Locale.US)
-                .format(new Date(current.timestamp));
-        String meta = category + "  •  " + time;
-        if (current.confidence > 0f) {
-            meta += "  •  " + Math.round(current.confidence * 100) + "%";
-        }
-        tvMeta.setText(meta);
-    }
-
-    private void showImage(String base64) {
+    private void bindImage(@Nullable String base64) {
+        Bitmap bmp = null;
         if (base64 != null && !base64.isEmpty()) {
             try {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                if (bitmap != null) {
-                    ivDetail.setImageBitmap(bitmap);
-                    return;
-                }
+                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
             } catch (Exception ignored) {
+                // ảnh hỏng -> dùng ảnh mặc định
             }
         }
-        ivDetail.setImageResource(android.R.drawable.ic_menu_gallery);
+        if (bmp != null) {
+            ivDetail.setImageBitmap(bmp);
+        } else {
+            ivDetail.setImageResource(android.R.drawable.ic_menu_gallery);
+        }
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (tts != null) {
-            tts.shutdown(); // also stops any speech still playing
+    /** Hiển thị đúng ngôn ngữ đang chọn. */
+    private void render() {
+        if (current == null) return;
+
+        String label = pick(showingVietnamese ? current.labelVi : current.labelEn,
+                current.labelEn, "Unknown");
+        String desc = pick(showingVietnamese ? current.descriptionVi : current.descriptionEn,
+                current.description, "—");
+        String objects = pick(showingVietnamese ? current.objectsListVi : current.objectsListEn,
+                current.objectsListEn, "—");
+
+        tvDetailLabel.setText(label);
+        tvDetailDesc.setText(desc);
+        tvDetailObjects.setText(objects);
+        btnDetailLang.setText(showingVietnamese ? "English" : "Tiếng Việt");
+
+        if (current.timestamp > 0) {
+            tvDetailTime.setText(new SimpleDateFormat("dd MMM yyyy  •  HH:mm",
+                    Locale.getDefault()).format(new Date(current.timestamp)));
+        } else {
+            tvDetailTime.setText("");
         }
+
+        String cat = current.category != null && !current.category.isEmpty()
+                ? current.category : "other";
+        chipCategory.setText(cap(cat));
+
+        if (current.confidence > 0f) {
+            chipConfidence.setVisibility(View.VISIBLE);
+            chipConfidence.setText(Math.round(current.confidence * 100) + "% match");
+        } else {
+            chipConfidence.setVisibility(View.GONE);
+        }
+
+        chipCount.setText(current.objectCount + (current.objectCount == 1 ? " object" : " objects"));
+    }
+
+    private void confirmDelete() {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete this scan?")
+                .setMessage("This cannot be undone.")
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Delete", (d, w) ->
+                        repo.deleteScan(scanId,
+                                unused -> {
+                                    if (gone()) return;
+                                    Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
+                                    finish();
+                                },
+                                e -> {
+                                    if (gone()) return;
+                                    Toast.makeText(this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                                }))
+                .show();
+    }
+
+    /** Lấy giá trị đầu tiên không rỗng. */
+    private static String pick(@Nullable String primary, @Nullable String fallback, String last) {
+        if (primary != null && !primary.trim().isEmpty()) return primary.trim();
+        if (fallback != null && !fallback.trim().isEmpty()) return fallback.trim();
+        return last;
+    }
+
+    private static String cap(String s) {
+        return s.isEmpty() ? s : Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 }

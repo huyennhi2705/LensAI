@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/auth_background">
 
-    <!-- Hình nền: cố định, không làm đổi kích thước layout -->
+    <!-- Hình nền phủ toàn trang: cố định, không làm đổi kích thước layout -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -29,12 +29,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 
-            <!-- Khung form màu trắng, bo góc phía trên -->
+            <!-- Khung form (đã sửa width về match_parent để căn giữa) -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
+                android:layout_height="820dp"
                 android:layout_weight="1"
-                android:background="@drawable/bg_sheet"
+                android:background="@null"
                 android:orientation="vertical"
                 android:padding="28dp">
 
@@ -76,7 +76,7 @@
                     android:layout_marginTop="4dp"
                     android:layout_marginBottom="24dp"
                     android:text="Nhận diện đồ vật bằng AI"
-                    android:textColor="@color/auth_hint"
+                    android:textColor="@color/auth_text"
                     android:textSize="15sp" />
 
                 <!-- Họ tên: chỉ hiển thị khi đăng ký -->
