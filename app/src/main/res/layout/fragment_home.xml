@@ -1,26 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/scrollHome"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8FAFC"
-    android:clipToPadding="false"
+    android:fillViewport="true"
     android:scrollbars="none">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="32dp">
+        android:paddingBottom="48dp">
 
-        <!-- 1. HEADER -->
+        <!-- 1. HEADER: Lời chào -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="48dp"
+            android:layout_marginEnd="24dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -29,22 +28,22 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <TextView
                     android:id="@+id/tvGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#475569"
-                    android:textSize="15sp" />
+                    android:text="Xin chào,"
+                    android:textColor="#64748B"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
+                    android:layout_height="34dp"
+                    android:layout_marginTop="4dp"
 
                     android:textColor="#0F172A"
-                    android:textSize="26sp"
+                    android:textSize="28sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -52,625 +51,405 @@
                 android:id="@+id/tvAvatar"
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:background="@drawable/bg_circle_soft"
-                android:clickable="true"
-                android:contentDescription="Your profile"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackgroundBorderless"
+                android:background="@drawable/bg_circle_blue_soft"
                 android:gravity="center"
-                android:text="🙂"
+                android:text="👋"
                 android:textSize="26sp" />
         </LinearLayout>
 
-        <!-- 2. HERO -->
+        <!-- 2. HERO SECTION (TỔNG QUAN & GIỚI THIỆU LỚN) -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
-            android:background="@drawable/bg_hero"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/bg_hero_gradient"
+            android:elevation="12dp"
             android:orientation="vertical"
-            android:padding="22dp">
+            android:padding="28dp">
 
+            <!-- Tiêu đề lớn -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Mở ra thế giới mới cùng Trí Tuệ Nhân Tạo"
+                android:textColor="#FFFFFF"
+                android:textSize="26sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:lineSpacingExtra="6dp"
+                android:text="LensAI là trợ lý thị giác AI mạnh mẽ giúp bạn khám phá thế giới xung quanh. Chỉ với một bức ảnh, hệ thống sẽ phân tích và cho bạn biết chính xác đó là đồ vật, động vật hay thực vật. Mọi lúc, mọi nơi."
+                android:textColor="#DBEAFE"
+                android:textSize="15sp" />
+
+            <!-- Khối trích dẫn / Điểm nhấn -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:layout_marginTop="20dp"
+                android:background="#33FFFFFF"
+                android:orientation="horizontal"
+                android:padding="16dp"
+                android:gravity="center_vertical">
 
-                <LinearLayout
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✨"
+                    android:textSize="24sp" />
+                <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="12dp"
                     android:layout_weight="1"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="Welcome to LensAI"
-                        android:textColor="#FFFFFF"
-                        android:textSize="24sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:lineSpacingExtra="3dp"
-                        android:text="Point your camera at anything. AI identifies objects, animals, plants and food in seconds."
-                        android:textColor="#FFFFFF"
-                        android:textSize="14sp" />
-                </LinearLayout>
-
-                <ImageView
-                    android:layout_width="64dp"
-                    android:layout_height="64dp"
-                    android:layout_marginStart="14dp"
-                    android:contentDescription="LensAI logo"
-                    android:src="@mipmap/logo" />
+                    android:text="Nhanh chóng - Chính xác - Hoàn toàn miễn phí"
+                    android:textColor="#FFFFFF"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btnStartScan"
                 android:layout_width="match_parent"
-                android:layout_height="58dp"
-                android:layout_marginTop="18dp"
-                android:text="📷  Start scan"
+                android:layout_height="60dp"
+                android:layout_marginTop="24dp"
+                android:text="Bắt đầu trải nghiệm ngay"
                 android:textAllCaps="false"
-                android:textColor="#1D4ED8"
-                android:textSize="17sp"
+                android:textColor="#4F46E5"
+                android:textSize="16sp"
                 android:textStyle="bold"
                 app:backgroundTint="#FFFFFF"
-                app:cornerRadius="16dp" />
-
-            <TextView
-                android:id="@+id/btnLearnMore"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="4dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?attr/selectableItemBackground"
-                android:gravity="center"
-                android:minHeight="48dp"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp"
-                android:text="How it works  ›"
-                android:textColor="#FFFFFF"
-                android:textSize="14sp"
-                android:textStyle="bold" />
+                app:cornerRadius="18dp"
+                app:icon="@android:drawable/ic_menu_camera"
+                app:iconGravity="textStart"
+                app:iconTint="#4F46E5" />
         </LinearLayout>
 
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginEnd="20dp"
-            android:orientation="horizontal">
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp">
-
-
-            </com.google.android.material.card.MaterialCardView>
-
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="1dp">
-
-
-            </com.google.android.material.card.MaterialCardView>
-        </LinearLayout>
-
-        <!-- 4. RECENT SCANS -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="20dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Recent scans"
-                android:textColor="#0F172A"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvSeeAll"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:clickable="true"
-                android:focusable="true"
-                android:padding="8dp"
-                android:text="See all"
-                android:textColor="#2563EB"
-                android:textSize="14sp"
-                android:textStyle="bold" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/tvOverviewHint"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="20dp"
-            android:text="Your recent recognition results will appear here."
-            android:textColor="#64748B"
-            android:textSize="13sp"
-            android:visibility="visible" />
-
-        <!-- RecyclerView: quan trọng, phải có ID rvRecent -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRecent"
-            android:layout_width="match_parent"
-            android:layout_height="170dp"
-            android:layout_marginTop="8dp"
-            android:clipToPadding="false"
-            android:paddingStart="20dp"
-            android:paddingEnd="20dp"
-            android:overScrollMode="never"
-            android:visibility="gone" />
-
-        <com.google.android.material.card.MaterialCardView
-            android:id="@+id/cardRecentEmpty"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginBottom="4dp"
-            app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="16dp"
-            app:cardElevation="1dp">
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:padding="20dp"
-                android:text="No scans yet. Start your first scan!"
-                android:textColor="#64748B"
-                android:textSize="13sp" />
-        </com.google.android.material.card.MaterialCardView>
-
-        <!-- 5. LENSAI NHẬN DIỆN ĐƯỢC GÌ -->
+        <!-- 3. GIỚI THIỆU TÍNH NĂNG (FEATURES) -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="24dp"
-            android:layout_marginEnd="20dp"
-            android:text="What can LensAI recognize?"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:text="Tại sao chọn LensAI?"
             android:textColor="#0F172A"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
-        <HorizontalScrollView
+        <!-- Tính năng 1 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:clipToPadding="false"
-            android:overScrollMode="never"
-            android:paddingStart="20dp"
-            android:paddingEnd="8dp"
-            android:scrollbars="none">
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_circle_blue_soft"
+                android:gravity="center"
+                android:text="⚡"
+                android:textSize="28sp" />
 
             <LinearLayout
-                android:id="@+id/layoutShowcase"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <!-- OBJECT -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="156dp"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#E2E8F0"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="104dp"
-                            android:background="#DBEAFE"
-                            android:gravity="center"
-                            android:importantForAccessibility="no"
-                            android:text="💻"
-                            android:textSize="46sp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Objects"
-                                android:textColor="#0F172A"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Everyday items around you"
-                                android:textColor="#475569"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- ANIMAL -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="156dp"
+                    android:text="Nhận diện trong tích tắc"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#E2E8F0"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="104dp"
-                            android:background="#FEF3C7"
-                            android:gravity="center"
-                            android:importantForAccessibility="no"
-                            android:text="🐶"
-                            android:textSize="46sp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Animals"
-                                android:textColor="#0F172A"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Pets and wildlife"
-                                android:textColor="#475569"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- PLANT -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="156dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#E2E8F0"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="104dp"
-                            android:background="#DCFCE7"
-                            android:gravity="center"
-                            android:importantForAccessibility="no"
-                            android:text="🌿"
-                            android:textSize="46sp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Plants"
-                                android:textColor="#0F172A"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Flowers, trees, herbs"
-                                android:textColor="#475569"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
-
-                <!-- FOOD -->
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="156dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="12dp"
-                    android:layout_marginBottom="6dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:foreground="?attr/selectableItemBackground"
-                    app:cardBackgroundColor="#FFFFFF"
-                    app:cardCornerRadius="20dp"
-                    app:cardElevation="2dp"
-                    app:strokeColor="#E2E8F0"
-                    app:strokeWidth="1dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="104dp"
-                            android:background="#FFE4E6"
-                            android:gravity="center"
-                            android:importantForAccessibility="no"
-                            android:text="🍜"
-                            android:textSize="46sp" />
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="12dp">
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:text="Food"
-                                android:textColor="#0F172A"
-                                android:textSize="15sp"
-                                android:textStyle="bold" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:layout_marginTop="2dp"
-                                android:text="Dishes and ingredients"
-                                android:textColor="#475569"
-                                android:textSize="12sp" />
-                        </LinearLayout>
-                    </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                    android:layout_marginTop="4dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Công nghệ máy học tiên tiến xử lý hình ảnh chỉ trong vài phần trăm giây."
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
             </LinearLayout>
-        </HorizontalScrollView>
+        </LinearLayout>
 
-        <!-- 6. HOW IT WORKS -->
-        <TextView
-            android:id="@+id/tvHowTitle"
+        <!-- Tính năng 2 -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="22dp"
-            android:layout_marginEnd="20dp"
-            android:text="How it works"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_circle_blue_soft"
+                android:gravity="center"
+                android:text="🎯"
+                android:textSize="28sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Độ chính xác cao"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Mô hình AI được huấn luyện trên hàng triệu hình ảnh, đảm bảo kết quả đáng tin cậy."
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Tính năng 3 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+                android:background="@drawable/bg_circle_blue_soft"
+                android:gravity="center"
+                android:text="🌐"
+                android:textSize="28sp" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Đa dạng lĩnh vực"
+                    android:textColor="#0F172A"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:lineSpacingExtra="2dp"
+                    android:text="Từ đồ vật hàng ngày, các loài động vật, cho đến các loại thực vật và món ăn."
+                    android:textColor="#64748B"
+                    android:textSize="14sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 4. HƯỚNG DẪN SỬ DỤNG (CHI TIẾT) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:text="Quy trình 3 bước đơn giản"
             android:textColor="#0F172A"
-            android:textSize="20sp"
+            android:textSize="22sp"
             android:textStyle="bold" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="12dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="24dp"
             app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="20dp"
-            app:cardElevation="2dp"
-            app:strokeColor="#E2E8F0"
-            app:strokeWidth="1dp">
+            app:cardCornerRadius="24dp"
+            app:cardElevation="2dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="18dp">
+                android:padding="24dp">
 
-                <!-- STEP 1 -->
+                <!-- Bước 1 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_circle_soft"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_hero_gradient"
                         android:gravity="center"
                         android:text="1"
-                        android:textColor="#1D4ED8"
-                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
-
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="16dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Take a photo"
+                            android:text="Mở Camera"
                             android:textColor="#0F172A"
-                            android:textSize="15sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Open the camera or pick an image."
-                            android:textColor="#475569"
-                            android:textSize="13sp" />
+                            android:text="Trỏ camera vào vật thể bạn muốn tìm hiểu."
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <View
                     android:layout_width="2dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="19dp"
-                    android:background="#BFDBFE" />
+                    android:layout_height="24dp"
+                    android:layout_marginStart="21dp"
+                    android:background="#E2E8F0" />
 
-                <!-- STEP 2 -->
+                <!-- Bước 2 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_circle_soft"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_hero_gradient"
                         android:gravity="center"
                         android:text="2"
-                        android:textColor="#1D4ED8"
-                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
-
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="16dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="AI analyzes it"
+                            android:text="Chụp ảnh"
                             android:textColor="#0F172A"
-                            android:textSize="15sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="LensAI detects the subject and its category."
-                            android:textColor="#475569"
-                            android:textSize="13sp" />
+                            android:text="Nhấn nút chụp để gửi hình ảnh cho AI xử lý."
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <View
                     android:layout_width="2dp"
-                    android:layout_height="16dp"
-                    android:layout_marginStart="19dp"
-                    android:background="#BFDBFE" />
+                    android:layout_height="24dp"
+                    android:layout_marginStart="21dp"
+                    android:background="#E2E8F0" />
 
-                <!-- STEP 3 -->
+                <!-- Bước 3 -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
-
                     <TextView
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:background="@drawable/bg_circle_soft"
+                        android:layout_width="44dp"
+                        android:layout_height="44dp"
+                        android:background="@drawable/bg_hero_gradient"
                         android:gravity="center"
                         android:text="3"
-                        android:textColor="#1D4ED8"
-                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
-
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="14dp"
+                        android:layout_marginStart="16dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Save to history"
+                            android:text="Xem kết quả"
                             android:textColor="#0F172A"
-                            android:textSize="15sp"
+                            android:textSize="16sp"
                             android:textStyle="bold" />
-
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="2dp"
-                            android:text="Every result is stored so you can revisit it anytime."
-                            android:textColor="#475569"
-                            android:textSize="13sp" />
+                            android:text="Thông tin chi tiết và độ chính xác sẽ hiện ra ngay lập tức."
+                            android:textColor="#64748B"
+                            android:textSize="14sp" />
                     </LinearLayout>
+
                 </LinearLayout>
+
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
+        <!-- 5. CALL TO ACTION (KÊU GỌI HÀNH ĐỘNG CUỐI TRANG) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="24dp"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sẵn sàng khám phá chưa?"
+                android:textColor="#0F172A"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:text="Tham gia cùng hàng ngàn người dùng đang sử dụng LensAI mỗi ngày."
+                android:textColor="#64748B"
+                android:textSize="14sp" />
+        </LinearLayout>
+
     </LinearLayout>
-</ScrollView>
+</androidx.core.widget.NestedScrollView>

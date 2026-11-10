@@ -4,14 +4,11 @@ import com.google.firebase.database.Exclude;
 import com.google.firebase.database.IgnoreExtraProperties;
 import com.google.firebase.database.PropertyName;
 
-/**
- * Một bản ghi trong Realtime Database: scan_history/{user_id}/{scan_id}
- * Tên trường trong Java giữ nguyên để adapter / màn hình khác không phải sửa.
- */
+
 @IgnoreExtraProperties
 public class ScanHistory {
 
-    /** scan_id: chính là khóa của node, không lưu thành trường riêng khi đọc. */
+
     @Exclude
     public String id;
 
@@ -57,6 +54,10 @@ public class ScanHistory {
 
     @PropertyName("image_base64")
     public String imageBase64;
+
+    // Tọa độ các bounding box (JSON string: label, confidence, x, y, w, h)
+    @PropertyName("box_data")
+    public String boxData;
 
     public ScanHistory() {
         // bắt buộc cho Firebase

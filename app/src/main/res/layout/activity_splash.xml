@@ -4,80 +4,182 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bg_splash">
+    android:background="#FCFAF5"> <!-- Màu nền kem sáng giống hình -->
 
-    <!-- Khung logo -->
+    <!-- 1. LOGO TRÊN CÙNG (3 chấm tròn trắng) -->
     <FrameLayout
-        android:id="@+id/logoContainer"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:background="@drawable/bg_logo_circle"
-        android:elevation="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/tvAppName"
+        android:id="@+id/topLogoContainer"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="60dp"
+        android:background="@drawable/bg_top_logo"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:id="@+id/ivLogo"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+        <!-- Giả lập 3 chấm tròn -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:contentDescription="Logo"
-            android:src="@drawable/ic_lens_hero" />
+            android:orientation="horizontal">
+            <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/bg_decor_dot" android:backgroundTint="#FFFFFF" android:layout_marginEnd="4dp"/>
+            <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/bg_decor_dot" android:backgroundTint="#FFFFFF" android:layout_marginEnd="4dp"/>
+            <View android:layout_width="8dp" android:layout_height="8dp" android:background="@drawable/bg_decor_dot" android:backgroundTint="#FFFFFF" />
+        </LinearLayout>
     </FrameLayout>
 
-    <!-- Tên ứng dụng -->
-    <TextView
-        android:id="@+id/tvAppName"
+    <!-- 2. TIÊU ĐỀ CHÍNH (Welcome to the ultimate...) -->
+    <LinearLayout
+        android:id="@+id/headerTextContainer"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="28dp"
-        android:letterSpacing="0.08"
-        android:text="LensAI"
-        android:textColor="#FFFFFF"
-        android:textSize="38sp"
-        android:textStyle="bold"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topLogoContainer">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome to the ultimate"
+            android:textColor="#423228"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-medium"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LensAI Experience!"
+            android:textColor="#423228"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:fontFamily="sans-serif-black"/>
+    </LinearLayout>
+
+    <!-- 3. KHU VỰC TRUNG TÂM (Vòng tròn trắng + Mascot + Icon bay) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/mascotArea"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintBottom_toTopOf="@+id/tvSubtitle"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/logoContainer" />
+        app:layout_constraintTop_toBottomOf="@id/headerTextContainer"
+        app:layout_constraintVertical_bias="0.4">
 
-    <!-- Dải nhấn -->
-    <View
-        android:id="@+id/accentBar"
-        android:layout_width="48dp"
-        android:layout_height="4dp"
-        android:layout_marginTop="12dp"
-        android:background="#FBBF24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvAppName" />
+        <!-- Vòng tròn trắng lớn -->
+        <View
+            android:id="@+id/whiteCircle"
+            android:layout_width="240dp"
+            android:layout_height="240dp"
+            android:background="@drawable/bg_circle_white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Phụ đề -->
+        <!-- Mascot (Logo app của bạn đặt ở giữa) -->
+        <ImageView
+            android:id="@+id/ivLogo"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/logo"
+            app:layout_constraintBottom_toBottomOf="@id/whiteCircle"
+            app:layout_constraintEnd_toEndOf="@id/whiteCircle"
+            app:layout_constraintStart_toStartOf="@id/whiteCircle"
+            app:layout_constraintTop_toTopOf="@id/whiteCircle" />
+
+        <!-- Các Icon bay lơ lửng (Bạn có thể thay icon khác) -->
+        <!-- Icon biểu đồ (Bên trái) -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginStart="10dp"
+            android:background="@drawable/bg_circle_white"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_auto_awesome"
+            app:tint="#F59E0B"
+            app:layout_constraintBottom_toBottomOf="@id/whiteCircle"
+            app:layout_constraintStart_toStartOf="@id/whiteCircle"
+            app:layout_constraintTop_toTopOf="@id/whiteCircle" />
+
+        <!-- Icon bóng đèn (Bên phải trên) -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="10dp"
+            android:background="@drawable/bg_circle_white"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_flash_off"
+            app:tint="#F59E0B"
+            app:layout_constraintEnd_toEndOf="@id/whiteCircle"
+            app:layout_constraintTop_toTopOf="@id/whiteCircle" />
+
+        <!-- Icon giỏ hàng (Bên phải dưới) -->
+        <ImageView
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/bg_circle_white"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:src="@drawable/ic_history"
+            app:tint="#F59E0B"
+            app:layout_constraintBottom_toBottomOf="@id/whiteCircle"
+            app:layout_constraintEnd_toEndOf="@id/whiteCircle" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- 4. ĐOẠN TEXT PHỤ ĐỀ -->
     <TextView
         android:id="@+id/tvSubtitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:letterSpacing="0.15"
-        android:text="Scan and Know, AI in Flow"
-        android:textColor="#C7D2FE"
-        android:textSize="13sp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="16dp"
+        android:gravity="center"
+        android:lineSpacingExtra="4dp"
+        android:text="Your smart object recognition companion\nfor everyone, anywhere 🌿"
+        android:textColor="#7A6B61"
+        android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/accentBar" />
+        app:layout_constraintTop_toBottomOf="@id/mascotArea" />
 
-    <!-- Dòng chân trang -->
+    <!-- 5. NÚT GET STARTED -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnGetStarted"
+        android:layout_width="200dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/bg_btn_dark_brown"
+        android:text="Get Started  →"
+        android:textAllCaps="false"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:backgroundTint="@null"
+        app:cornerRadius="30dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvSubtitle" />
+
+    <!-- 6. TEXT Ở DƯỚI CÙNG (Footer) -->
     <TextView
         android:id="@+id/tvFooter"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:text="Powered by Huyenhi"
-        android:textColor="#80FFFFFF"
+        android:textColor="#9A8C81"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

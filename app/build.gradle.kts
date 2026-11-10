@@ -41,6 +41,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        mlModelBinding = true
     }
 
     // Không nén model.tflite để đọc trực tiếp từ assets

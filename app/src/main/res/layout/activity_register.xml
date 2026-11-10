@@ -36,15 +36,24 @@
                 android:background="@drawable/bg_sheet"
                 android:orientation="vertical"
                 android:padding="28dp">
-
-                <ImageView
-                    android:id="@+id/imgLogo"
+                <!-- Logo tròn -->
+                <androidx.cardview.widget.CardView
                     android:layout_width="72dp"
                     android:layout_height="72dp"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="Logo LENSAI"
-                    android:src="@drawable/ic_lensai_logo" />
+                    app:cardBackgroundColor="#33FFFFFF"
+                    app:cardCornerRadius="36dp"
+                    app:cardElevation="0dp">
 
+                    <ImageView
+                        android:id="@+id/imgLogo"
+                        android:layout_width="match_parent"
+                        android:layout_height="63dp"
+                        android:layout_margin="3dp"
+                        android:contentDescription="Logo LENSAI"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/logo" />
+                </androidx.cardview.widget.CardView>
                 <TextView
                     android:id="@+id/tvAppName"
                     android:layout_width="wrap_content"
@@ -63,6 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Đăng ký"
+                    android:layout_gravity="center"
                     android:textColor="@color/auth_text"
                     android:textSize="28sp"
                     android:textStyle="bold" />

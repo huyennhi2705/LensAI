@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/auth_background">
 
-    <!-- Hình nền phủ toàn trang: cố định, không làm đổi kích thước layout -->
+    <!-- Hình nền phủ toàn trang -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -24,111 +24,182 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <!-- Chừa chỗ cho hình nền phía trên -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="200dp" />
+                android:layout_height="190dp" />
 
-            <!-- Khung form (đã sửa width về match_parent để căn giữa) -->
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="820dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:background="@null"
                 android:orientation="vertical"
-                android:padding="28dp">
+                android:paddingHorizontal="28dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="32dp">
 
                 <!-- Logo tròn -->
-                <ImageView
-                    android:id="@+id/imgLogo"
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
+                <androidx.cardview.widget.CardView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="Logo LENSAI"
-                    android:src="@drawable/ic_lensai_logo" />
+                    app:cardBackgroundColor="#33FFFFFF"
+                    app:cardCornerRadius="36dp"
+                    app:cardElevation="0dp">
 
-                <!-- Tên ứng dụng -->
+                    <ImageView
+                        android:id="@+id/imgLogo"
+                        android:layout_width="match_parent"
+                        android:layout_height="63dp"
+                        android:layout_margin="3dp"
+                        android:contentDescription="Logo LENSAI"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/logo" />
+                </androidx.cardview.widget.CardView>
+
                 <TextView
                     android:id="@+id/tvAppName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="24dp"
-                    android:letterSpacing="0.15"
+                    android:layout_marginBottom="20dp"
+                    android:letterSpacing="0.2"
                     android:text="LENSAI"
                     android:textColor="@color/auth_primary"
-                    android:textSize="22sp"
+                    android:textSize="20sp"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/tvTitle"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center"
                     android:text="Đăng nhập"
                     android:textColor="@color/auth_text"
-                    android:textSize="28sp"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
 
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginBottom="24dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginBottom="28dp"
+                    android:alpha="0.65"
+                    android:gravity="center"
                     android:text="Nhận diện đồ vật bằng AI"
                     android:textColor="@color/auth_text"
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
 
-                <!-- Họ tên: chỉ hiển thị khi đăng ký -->
+                <!-- Họ tên: chỉ hiển thị khi đăng ký (Đã thêm icon) -->
                 <EditText
                     android:id="@+id/etFullName"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_height="54dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_input"
+                    android:drawableStart="@drawable/ic_person"
+                    android:drawablePadding="12dp"
                     android:hint="Họ và tên"
                     android:inputType="textPersonName|textCapWords"
-                    android:paddingHorizontal="16dp"
+                    android:paddingHorizontal="18dp"
                     android:textColor="@color/auth_text"
                     android:textColorHint="@color/auth_hint"
-                    android:textSize="15sp"
+                    android:textSize="14sp"
                     android:visibility="gone" />
 
+                <!-- Nhãn Email -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Email"
+                    android:textColor="@color/auth_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- Email (Đã thêm icon) -->
                 <EditText
                     android:id="@+id/etEmail"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="12dp"
+                    android:layout_height="54dp"
+                    android:layout_marginBottom="16dp"
                     android:background="@drawable/bg_input"
+                    android:drawableStart="@drawable/ic_email"
+                    android:drawablePadding="12dp"
                     android:hint="Email"
                     android:inputType="textEmailAddress"
-                    android:paddingHorizontal="16dp"
+                    android:paddingHorizontal="18dp"
                     android:textColor="@color/auth_text"
                     android:textColorHint="@color/auth_hint"
-                    android:textSize="15sp" />
+                    android:textSize="14sp" />
 
-                <EditText
-                    android:id="@+id/etPassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginBottom="24dp"
-                    android:background="@drawable/bg_input"
-                    android:hint="Mật khẩu"
-                    android:inputType="textPassword"
-                    android:paddingHorizontal="16dp"
+                <!-- Nhãn Mật khẩu -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="Mật khẩu"
                     android:textColor="@color/auth_text"
-                    android:textColorHint="@color/auth_hint"
-                    android:textSize="15sp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <!-- Khung chứa Mật khẩu và Nút ẩn/hiện -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="54dp"
+                    android:layout_marginBottom="16dp">
+
+                    <!-- Ô nhập mật khẩu (Đã thêm icon ổ khóa) -->
+                    <EditText
+                        android:id="@+id/etPassword"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/bg_input"
+                        android:drawableStart="@drawable/ic_lock"
+                        android:drawablePadding="12dp"
+                        android:hint="Mật khẩu"
+                        android:inputType="textPassword"
+                        android:paddingHorizontal="18dp"
+                        android:paddingEnd="50dp"
+                       android:textColor="@color/auth_text"
+                       android:textColorHint="@color/auth_hint"
+                       android:textSize="14sp" />
+
+                    <!-- Icon con mắt -->
+                    <ImageView
+                        android:id="@+id/btnTogglePassword"
+                        android:layout_width="48dp"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="end"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:padding="14dp"
+                        android:src="@drawable/ic_eye_hide"
+                        app:tint="@color/auth_hint" />
+                </FrameLayout>
+
+                <!-- Ghi nhớ đăng nhập -->
+                <CheckBox
+                    android:id="@+id/cbRememberMe"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="20dp"
+                    android:text="Ghi nhớ đăng nhập"
+                    android:textColor="@color/auth_text"
+                    android:textSize="14sp"
+                    android:buttonTint="@color/auth_primary" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/btnAction"
                     android:layout_width="match_parent"
-                    android:layout_height="52dp"
+                    android:layout_height="54dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="Đăng nhập"
                     android:textAllCaps="false"
                     android:textSize="16sp"
+                    android:textStyle="bold"
                     app:backgroundTint="@color/auth_primary"
-                    app:cornerRadius="12dp" />
+                    app:cornerRadius="16dp" />
 
                 <ProgressBar
                     android:id="@+id/progressBar"
@@ -149,7 +220,8 @@
                     android:padding="8dp"
                     android:text="Chưa có tài khoản? Đăng ký"
                     android:textColor="@color/auth_primary"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>

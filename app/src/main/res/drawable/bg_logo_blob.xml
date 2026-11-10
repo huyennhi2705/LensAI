@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#E8F4EC"/> <!-- Xanh lá siêu nhạt -->
+    <!-- Viền nét đứt nếu muốn giống style vẽ tay -->
+    <stroke android:width="2dp" android:color="#A8D5BA" android:dashWidth="6dp" android:dashGap="4dp"/>
+</shape>

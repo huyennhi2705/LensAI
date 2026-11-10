@@ -29,10 +29,18 @@
 
     <color name="bin_recyclable">#1D9E75</color>
     <color name="bin_non_recyclable">#D85A30</color>
-    <color name="auth_primary">#2563EB</color>
+    <color name="auth_primary">#FF6F6F</color>
     <color name="auth_background">#FFFFFF</color>
     <color name="auth_input_bg">#F5F7FA</color>
     <color name="auth_input_stroke">#E2E6EC</color>
     <color name="auth_text">#111827</color>
     <color name="auth_hint">#6B7280</color>
+    <color name="bg_cream">#FDFBF7</color>
+    <!-- Màu chữ chính (Nâu trầm ấm) -->
+    <color name="text_dark_brown">#4A3B32</color>
+    <!-- Màu chữ phụ (Xám nâu nhạt) -->
+    <color name="text_light_brown">#9A8C81</color>
+    <!-- Màu nhấn (Xanh lá pastel hoặc Cam đào) -->
+    <color name="accent_green">#A8D5BA</color>
+    <color name="accent_peach">#FFB4A2</color>
 </resources>
