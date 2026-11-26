@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#000000">
 
-    <!-- LỚP 1: CAMERA TOÀN MÀN HÌNH -->
+    <!-- ================= LỚP 1: CAMERA TOÀN MÀN HÌNH ================= -->
     <FrameLayout
         android:id="@+id/cameraContainer"
         android:layout_width="match_parent"
@@ -17,21 +18,20 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <!-- Ảnh chụp tĩnh (hiện lên sau khi chụp để đè lên camera) -->
         <ImageView
             android:id="@+id/ivResult"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:contentDescription="Captured image"
             android:scaleType="fitCenter"
-            android:visibility="gone" />
+            android:visibility="gone"
+            android:contentDescription="Captured image" />
 
-        <!-- Lớp vẽ Bounding Box -->
         <com.example.lensai.view.BoundingBoxView
             android:id="@+id/boxOverlay"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
+        <!-- Status chip -->
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
@@ -45,6 +45,7 @@
             android:textColor="#FFFFFF"
             android:textSize="14sp" />
 
+        <!-- Progress -->
         <ProgressBar
             android:id="@+id/progress"
             android:layout_width="80dp"
@@ -54,17 +55,83 @@
             android:indeterminateTint="#22D3EE"
             android:padding="20dp"
             android:visibility="gone" />
+
+        <!-- ========== THANH ĐIỀU KHIỂN TRÊN (Flash + Gallery) ========== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="horizontal"
+            android:gravity="end">
+
+            <ImageButton
+                android:id="@+id/btnGallery"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_circle_dark"
+                android:src="@android:drawable/ic_menu_gallery"
+                android:tint="#ffffff"
+                android:contentDescription="Chọn ảnh từ thư viện" />
+
+            <ImageButton
+                android:id="@+id/btnFlash"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:background="@drawable/bg_circle_dark"
+                android:src="@drawable/icon_flash"
+                android:tint="#ffffff"
+                android:contentDescription="Bật/tắt đèn flash" />
+        </LinearLayout>
+
+        <!-- ========== TÌM ĐỒ BẰNG GIỌNG NÓI ========== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="150dp"
+            android:layout_marginHorizontal="16dp"
+            android:orientation="horizontal">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnVoiceSearch"
+                android:layout_width="0dp"
+                android:layout_height="88dp"
+                android:layout_marginEnd="8dp"
+                android:layout_weight="2"
+                android:contentDescription="Tìm đồ vật bằng giọng nói. Chạm hai lần rồi nói tên đồ vật."
+                android:text="🎤 Nói đồ cần tìm"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                app:backgroundTint="#22D3EE"
+                android:textColor="#0F172A"
+                app:cornerRadius="24dp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnStopSearch"
+                android:layout_width="0dp"
+                android:layout_height="88dp"
+                android:layout_weight="1"
+                android:contentDescription="Dừng tìm kiếm"
+                android:text="Dừng"
+                android:textAllCaps="false"
+                android:textSize="18sp"
+                app:backgroundTint="#EF4444"
+                android:textColor="#FFFFFF"
+                app:cornerRadius="24dp" />
+        </LinearLayout>
     </FrameLayout>
 
-    <!-- LỚP 2: BOTTOM SHEET (trượt từ dưới lên) -->
+    <!-- ================= LỚP 2: BOTTOM SHEET ================= -->
     <androidx.core.widget.NestedScrollView
         android:id="@+id/bottomSheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/bg_bottom_sheet_rounded"
         android:elevation="16dp"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="260dp"
+        app:behavior_peekHeight="120dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <LinearLayout
@@ -74,34 +141,34 @@
             android:paddingStart="16dp"
             android:paddingTop="12dp"
             android:paddingEnd="16dp"
-            android:paddingBottom="170dp">
+            android:paddingBottom="40dp">
 
-            <!-- Thanh nắm kéo -->
+            <!-- Handle -->
             <View
                 android:layout_width="40dp"
                 android:layout_height="4dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginBottom="16dp"
-                android:background="#CBD5E1" />
+                android:background="#CBD5E1"
+                android:layout_marginBottom="16dp" />
 
-            <!-- TRẠNG THÁI TRỐNG (khi chưa chụp) -->
+            <!-- Empty State -->
             <LinearLayout
                 android:id="@+id/layoutEmptyState"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:orientation="vertical"
+                android:gravity="center"
                 android:paddingBottom="20dp">
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Hướng camera vào vật thể và nhấn nút chụp"
+                    android:text="Point the camera at the object and press the shutter button."
                     android:textColor="#64748B"
                     android:textSize="15sp" />
             </LinearLayout>
 
-            <!-- KẾT QUẢ CHÍNH -->
+            <!-- Results -->
             <LinearLayout
                 android:id="@+id/layoutResults"
                 android:layout_width="match_parent"
@@ -109,7 +176,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <!-- Thẻ kết quả -->
+                <!-- Card Kết quả chính -->
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -125,6 +192,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
+                        <!-- Header -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -165,6 +233,17 @@
                                 app:cornerRadius="18dp" />
                         </LinearLayout>
 
+                        <!-- Ảnh thu nhỏ -->
+                        <ImageView
+                            android:id="@+id/ivCapturedPhoto"
+                            android:layout_width="match_parent"
+                            android:layout_height="200dp"
+                            android:layout_marginTop="12dp"
+                            android:background="#1E293B"
+                            android:scaleType="centerCrop"
+                            android:visibility="gone"
+                            android:contentDescription="Captured Image" />
+
                         <!-- Mô tả -->
                         <TextView
                             android:id="@+id/tvResult"
@@ -178,6 +257,24 @@
                             android:textColor="#1E293B"
                             android:textIsSelectable="true"
                             android:textSize="16sp" />
+
+                        <!-- Nút Nghe -->
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/btnSpeak"
+                            style="@style/Widget.Material3.Button.TonalButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="40dp"
+                            android:layout_marginTop="12dp"
+                            android:text="Nghe đọc"
+                            android:textAllCaps="false"
+                            android:textColor="#047857"
+                            android:textSize="13sp"
+                            app:backgroundTint="#D1FAE5"
+                            app:cornerRadius="20dp"
+                            app:icon="@android:drawable/ic_lock_silent_mode_off"
+                            app:iconGravity="textStart"
+                            app:iconPadding="6dp"
+                            app:iconTint="#047857" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
@@ -187,7 +284,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
-                    android:text="Chi tiết vật thể"
+                    android:text="Object details"
                     android:textColor="#0F172A"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -199,11 +296,12 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:clipToPadding="false"
+                    android:orientation="horizontal"
                     android:visibility="gone"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     tools:listitem="@layout/item_detected_object" />
 
-                <!-- Card gợi ý AI -->
+                <!-- AI Card -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/aiCard"
                     android:layout_width="match_parent"
@@ -222,6 +320,7 @@
                         android:orientation="vertical"
                         android:padding="16dp">
 
+                        <!-- Header AI -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -310,6 +409,7 @@
                             app:chipSpacingHorizontal="8dp"
                             app:chipSpacingVertical="4dp" />
 
+                        <!-- Ask AI -->
                         <LinearLayout
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -351,55 +451,35 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
+            <!-- ===== TEST BUTTONS – XOÁ SAU KHI KIỂM TRA XONG ===== -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:padding="8dp">
 
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTestTts"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="4dp"
+                    android:text="🔊 Test TTS"
+                    android:textAllCaps="false"
+                    app:backgroundTint="#6366F1" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTestVoice"
+                    android:layout_width="0dp"
+                    android:layout_height="48dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="4dp"
+                    android:text="🎤 Test Voice"
+                    android:textAllCaps="false"
+                    app:backgroundTint="#10B981" />
+            </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- LỚP 3: THANH NÚT (cố định ở đáy, nằm trên bottom sheet) -->
-    <LinearLayout
-        android:id="@+id/buttonBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="#FFFFFF"
-        android:elevation="24dp"
-        android:orientation="vertical"
-        android:paddingStart="16dp"
-        android:paddingTop="12dp"
-        android:paddingEnd="16dp"
-        android:paddingBottom="12dp">
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCapture"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Capture &amp; Recognize"
-            android:textAllCaps="false"
-            android:textSize="16sp"
-            app:backgroundTint="#FF6666"
-            app:cornerRadius="28dp"
-            app:elevation="6dp"
-            app:icon="@android:drawable/ic_menu_camera"
-            app:iconGravity="textStart"
-            app:iconPadding="10dp"
-            app:iconTint="#FFFFFF" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnSpeak"
-            style="@style/Widget.Material3.Button.TonalButton"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="10dp"
-            android:text="Replay"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="14sp"
-            app:backgroundTint="#FF7A7A"
-            app:cornerRadius="24dp"
-            app:icon="@android:drawable/ic_lock_silent_mode_off"
-            app:iconGravity="textStart"
-            app:iconPadding="6dp"
-            app:iconTint="#047857" />
-    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

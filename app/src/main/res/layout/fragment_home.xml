@@ -11,14 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="48dp">
+        android:paddingBottom="40dp">
 
-        <!-- 1. HEADER: Lời chào -->
+        <!-- 1. HEADER -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="48dp"
+            android:layout_marginTop="36dp"
             android:layout_marginEnd="24dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">
@@ -28,270 +28,256 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
                 <TextView
                     android:id="@+id/tvGreeting"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Xin chào,"
+                    android:text="Hello,"
                     android:textColor="#64748B"
-                    android:textSize="16sp" />
+                    android:textSize="15sp" />
 
                 <TextView
                     android:id="@+id/tvUserName"
                     android:layout_width="wrap_content"
-                    android:layout_height="34dp"
-                    android:layout_marginTop="4dp"
-
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
                     android:textColor="#0F172A"
-                    android:textSize="28sp"
+                    android:textSize="26sp"
                     android:textStyle="bold" />
             </LinearLayout>
 
             <TextView
                 android:id="@+id/tvAvatar"
-                android:layout_width="52dp"
-                android:layout_height="52dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_circle_blue_soft"
                 android:gravity="center"
                 android:text="👋"
-                android:textSize="26sp" />
+                android:textSize="24sp" />
         </LinearLayout>
 
-        <!-- 2. HERO SECTION (TỔNG QUAN & GIỚI THIỆU LỚN) -->
-        <LinearLayout
+        <!-- 2. HÌNH MINH HỌA CAMERA + AI (mới thêm) -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            app:cardBackgroundColor="#EEF2FF"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="16dp">
+
+                <!-- Hình nhỏ mô phỏng -->
+                <ImageView
+                    android:layout_width="102dp"
+                    android:layout_height="102dp"
+                    android:src="@drawable/scanhinh"
+                    android:scaleType="centerCrop"
+                    android:background="@drawable/bg_circle_blue_soft"
+                    android:padding="12dp"
+                    android:contentDescription="Minh họa quét bằng camera" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Scan with Camera"
+                        android:textColor="#0F172A"
+                        android:textSize="16sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Identifying objects via computer vision using just a single image."
+                        android:textColor="#64748B"
+                        android:textSize="13sp"
+                        android:lineSpacingExtra="2dp" />
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+
+
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="24dp"
-            android:background="@drawable/bg_hero_gradient"
-            android:elevation="12dp"
-            android:orientation="vertical"
-            android:padding="28dp">
-
-            <!-- Tiêu đề lớn -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Mở ra thế giới mới cùng Trí Tuệ Nhân Tạo"
-                android:textColor="#FFFFFF"
-                android:textSize="26sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:lineSpacingExtra="6dp"
-                android:text="LensAI là trợ lý thị giác AI mạnh mẽ giúp bạn khám phá thế giới xung quanh. Chỉ với một bức ảnh, hệ thống sẽ phân tích và cho bạn biết chính xác đó là đồ vật, động vật hay thực vật. Mọi lúc, mọi nơi."
-                android:textColor="#DBEAFE"
-                android:textSize="15sp" />
-
-            <!-- Khối trích dẫn / Điểm nhấn -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:background="#33FFFFFF"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                android:gravity="center_vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="✨"
-                    android:textSize="24sp" />
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:layout_weight="1"
-                    android:text="Nhanh chóng - Chính xác - Hoàn toàn miễn phí"
-                    android:textColor="#FFFFFF"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnStartScan"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_marginTop="24dp"
-                android:text="Bắt đầu trải nghiệm ngay"
-                android:textAllCaps="false"
-                android:textColor="#4F46E5"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                app:backgroundTint="#FFFFFF"
-                app:cornerRadius="18dp"
-                app:icon="@android:drawable/ic_menu_camera"
-                app:iconGravity="textStart"
-                app:iconTint="#4F46E5" />
-        </LinearLayout>
-
-        <!-- 3. GIỚI THIỆU TÍNH NĂNG (FEATURES) -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
-            android:layout_marginEnd="24dp"
-            android:text="Tại sao chọn LensAI?"
+            android:text="Why choose LensAI?"
             android:textColor="#0F172A"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
-        <!-- Tính năng 1 -->
+        <!-- Feature 1 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="16dp"
             android:layout_marginEnd="24dp"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_circle_blue_soft"
                 android:gravity="center"
                 android:text="⚡"
-                android:textSize="28sp" />
+                android:textSize="24sp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Nhận diện trong tích tắc"
+                    android:text="Instant recognition"
                     android:textColor="#0F172A"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:lineSpacingExtra="2dp"
-                    android:text="Công nghệ máy học tiên tiến xử lý hình ảnh chỉ trong vài phần trăm giây."
+                    android:layout_marginTop="2dp"
+                    android:text="AI processes images in just a fraction of a second."
                     android:textColor="#64748B"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Tính năng 2 -->
+        <!-- Feature 2 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="18dp"
             android:layout_marginEnd="24dp"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_circle_blue_soft"
                 android:gravity="center"
                 android:text="🎯"
-                android:textSize="28sp" />
+                android:textSize="24sp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Độ chính xác cao"
+                    android:text="High accuracy"
                     android:textColor="#0F172A"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:lineSpacingExtra="2dp"
-                    android:text="Mô hình AI được huấn luyện trên hàng triệu hình ảnh, đảm bảo kết quả đáng tin cậy."
+                    android:layout_marginTop="2dp"
+                    android:text="Trained on millions of images, delivering reliable results."
                     android:textColor="#64748B"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- Tính năng 3 -->
+        <!-- Feature 3 -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="18dp"
             android:layout_marginEnd="24dp"
             android:orientation="horizontal">
 
             <TextView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
                 android:background="@drawable/bg_circle_blue_soft"
                 android:gravity="center"
                 android:text="🌐"
-                android:textSize="28sp" />
+                android:textSize="24sp" />
 
             <LinearLayout
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginStart="14dp"
                 android:layout_weight="1"
                 android:orientation="vertical">
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Đa dạng lĩnh vực"
+                    android:text="Diverse fields"
                     android:textColor="#0F172A"
-                    android:textSize="16sp"
+                    android:textSize="15sp"
                     android:textStyle="bold" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:lineSpacingExtra="2dp"
-                    android:text="Từ đồ vật hàng ngày, các loài động vật, cho đến các loại thực vật và món ăn."
+                    android:layout_marginTop="2dp"
+                    android:text="Everyday objects, animals, plants, and food."
                     android:textColor="#64748B"
-                    android:textSize="14sp" />
+                    android:textSize="13sp" />
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 4. HƯỚNG DẪN SỬ DỤNG (CHI TIẾT) -->
+        <!-- 5. HƯỚNG DẪN 3 BƯỚC -->
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="32dp"
             android:layout_marginEnd="24dp"
-            android:text="Quy trình 3 bước đơn giản"
+            android:text="Cách sử dụng"
             android:textColor="#0F172A"
-            android:textSize="22sp"
+            android:textSize="20sp"
             android:textStyle="bold" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             android:layout_marginEnd="24dp"
             app:cardBackgroundColor="#FFFFFF"
-            app:cardCornerRadius="24dp"
-            app:cardElevation="2dp">
+            app:cardCornerRadius="20dp"
+            app:cardElevation="1dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="24dp">
+                android:padding="20dp">
 
                 <!-- Bước 1 -->
                 <LinearLayout
@@ -299,42 +285,46 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <TextView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:background="@drawable/bg_hero_gradient"
                         android:gravity="center"
                         android:text="1"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="14dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Mở Camera"
+                            android:text="Open Camera"
                             android:textColor="#0F172A"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Trỏ camera vào vật thể bạn muốn tìm hiểu."
+                            android:layout_marginTop="1dp"
+                            android:text="Point the camera at the object you want to identify."
                             android:textColor="#64748B"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <View
                     android:layout_width="2dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="21dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="17dp"
                     android:background="#E2E8F0" />
 
                 <!-- Bước 2 -->
@@ -343,42 +333,46 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <TextView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:background="@drawable/bg_hero_gradient"
                         android:gravity="center"
                         android:text="2"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="14dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Chụp ảnh"
+                            android:text="Take a photo"
                             android:textColor="#0F172A"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Nhấn nút chụp để gửi hình ảnh cho AI xử lý."
+                            android:layout_marginTop="1dp"
+                            android:text="Press the shutter button to let the AI process it."
                             android:textColor="#64748B"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
 
                 <View
                     android:layout_width="2dp"
-                    android:layout_height="24dp"
-                    android:layout_marginStart="21dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="17dp"
                     android:background="#E2E8F0" />
 
                 <!-- Bước 3 -->
@@ -387,69 +381,67 @@
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
+
                     <TextView
-                        android:layout_width="44dp"
-                        android:layout_height="44dp"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
                         android:background="@drawable/bg_hero_gradient"
                         android:gravity="center"
                         android:text="3"
                         android:textColor="#FFFFFF"
-                        android:textSize="18sp"
+                        android:textSize="15sp"
                         android:textStyle="bold" />
+
                     <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
+                        android:layout_marginStart="14dp"
                         android:layout_weight="1"
                         android:orientation="vertical">
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Xem kết quả"
+                            android:text="View results"
                             android:textColor="#0F172A"
-                            android:textSize="16sp"
+                            android:textSize="15sp"
                             android:textStyle="bold" />
+
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:text="Thông tin chi tiết và độ chính xác sẽ hiện ra ngay lập tức."
+                            android:layout_marginTop="1dp"
+                            android:text="Detailed information appears immediately."
                             android:textColor="#64748B"
-                            android:textSize="14sp" />
+                            android:textSize="13sp" />
                     </LinearLayout>
-
                 </LinearLayout>
-
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- 5. CALL TO ACTION (KÊU GỌI HÀNH ĐỘNG CUỐI TRANG) -->
-        <LinearLayout
+        <!-- 6. FOOTER -->
+        <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="28dp"
             android:layout_marginEnd="24dp"
             android:gravity="center"
-            android:orientation="vertical">
+            android:text="Are you ready to explore?"
+            android:textColor="#0F172A"
+            android:textSize="16sp"
+            android:textStyle="bold" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Sẵn sàng khám phá chưa?"
-                android:textColor="#0F172A"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:gravity="center"
-                android:text="Tham gia cùng hàng ngàn người dùng đang sử dụng LensAI mỗi ngày."
-                android:textColor="#64748B"
-                android:textSize="14sp" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginEnd="32dp"
+            android:gravity="center"
+            android:text="Thousands of people are using LensAI every day."
+            android:textColor="#64748B"
+            android:textSize="13sp" />
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

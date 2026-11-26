@@ -12,46 +12,38 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingBottom="32dp">
+        android:paddingBottom="36dp">
 
-        <!-- ========== HEADER ========== -->
-        <LinearLayout
-            android:layout_width="match_parent"
+        <!-- ========== TITLE ========== -->
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/bg_header_bottom"
-            android:elevation="8dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="20dp"
-            android:paddingTop="28dp"
-            android:paddingBottom="28dp">
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="28dp"
+            android:fontFamily="sans-serif-black"
+            android:text="Settings"
+            android:textColor="#0F172A"
+            android:textSize="28sp" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif-black"
-                android:text="Settings"
-                android:textColor="#FFFFFF"
-                android:textSize="28sp" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:text="Customize your LensAI experience"
-                android:textColor="#BFDBFE"
-                android:textSize="13sp" />
-        </LinearLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="4dp"
+            android:text="Customize your LensAI experience"
+            android:textColor="#64748B"
+            android:textSize="14sp" />
 
         <!-- ========== SPEECH & VOICE ========== -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="28dp"
             android:fontFamily="sans-serif-medium"
             android:text="Speech &amp; Voice"
-            android:textColor="#0F172A"
-            android:textSize="15sp" />
+            android:textColor="#64748B"
+            android:textSize="13sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -60,7 +52,7 @@
             android:layout_marginTop="10dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="3dp"
+            app:cardElevation="2dp"
             app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
@@ -68,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingVertical="6dp">
+                android:paddingVertical="4dp">
 
                 <!-- Auto Speak -->
                 <LinearLayout
@@ -123,14 +115,16 @@
                     android:layout_marginStart="72dp"
                     android:background="#F1F5F9" />
 
-                <!-- Speech Rate -->
+                <!-- Speech Rate (đã thiết kế lại) -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     android:paddingHorizontal="16dp"
-                    android:paddingVertical="14dp">
+                    android:paddingTop="16dp"
+                    android:paddingBottom="18dp">
 
+                    <!-- Hàng tiêu đề + giá trị -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -164,25 +158,64 @@
                                 android:id="@+id/tvSpeechRateValue"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Normal (1.0x)"
+                                android:layout_marginTop="2dp"
+                                android:text="Normal • 1.0x"
                                 android:textColor="#64748B"
-                                android:textSize="12sp" />
+                                android:textSize="13sp" />
                         </LinearLayout>
                     </LinearLayout>
 
+                    <!-- Slider -->
                     <com.google.android.material.slider.Slider
                         android:id="@+id/sliderSpeechRate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="56dp"
-                        android:layout_marginTop="4dp"
+                        android:layout_marginTop="12dp"
                         android:value="1.0"
                         android:valueFrom="0.5"
                         android:valueTo="1.5"
                         android:stepSize="0.1"
+                        app:haloColor="#BFDBFE"
                         app:thumbColor="#2563EB"
+                        app:thumbRadius="10dp"
                         app:trackColorActive="#2563EB"
-                        app:trackColorInactive="#DBEAFE" />
+                        app:trackColorInactive="#E0E7FF"
+                        app:trackHeight="6dp" />
+
+                    <!-- Nhãn Slow / Normal / Fast -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Slow"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="Normal"
+                            android:textColor="#64748B"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="end"
+                            android:text="Fast"
+                            android:textColor="#94A3B8"
+                            android:textSize="12sp" />
+                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -191,12 +224,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:fontFamily="sans-serif-medium"
             android:text="Recognition"
-            android:textColor="#0F172A"
-            android:textSize="15sp" />
+            android:textColor="#64748B"
+            android:textSize="13sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -205,7 +238,7 @@
             android:layout_marginTop="10dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="3dp"
+            app:cardElevation="2dp"
             app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
@@ -213,9 +246,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingVertical="6dp">
+                android:paddingVertical="4dp">
 
-                <!-- Save History Automatically -->
+                <!-- Auto Save History -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -321,12 +354,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:fontFamily="sans-serif-medium"
             android:text="Data &amp; Storage"
-            android:textColor="#0F172A"
-            android:textSize="15sp" />
+            android:textColor="#64748B"
+            android:textSize="13sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -335,7 +368,7 @@
             android:layout_marginTop="10dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="3dp"
+            app:cardElevation="2dp"
             app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
@@ -343,7 +376,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingVertical="6dp">
+                android:paddingVertical="4dp">
 
                 <!-- Clear History -->
                 <LinearLayout
@@ -390,8 +423,8 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@android:drawable/ic_menu_more"
                         app:tint="#94A3B8" />
                 </LinearLayout>
@@ -447,8 +480,8 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@android:drawable/ic_menu_more"
                         app:tint="#94A3B8" />
                 </LinearLayout>
@@ -459,12 +492,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="24dp"
             android:fontFamily="sans-serif-medium"
             android:text="About"
-            android:textColor="#0F172A"
-            android:textSize="15sp" />
+            android:textColor="#64748B"
+            android:textSize="13sp" />
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
@@ -473,7 +506,7 @@
             android:layout_marginTop="10dp"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="20dp"
-            app:cardElevation="3dp"
+            app:cardElevation="2dp"
             app:strokeColor="#E2E8F0"
             app:strokeWidth="1dp">
 
@@ -481,7 +514,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:paddingVertical="6dp">
+                android:paddingVertical="4dp">
 
                 <!-- App Version -->
                 <LinearLayout
@@ -576,8 +609,8 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@android:drawable/ic_menu_more"
                         app:tint="#94A3B8" />
                 </LinearLayout>
@@ -633,8 +666,8 @@
                     </LinearLayout>
 
                     <ImageView
-                        android:layout_width="20dp"
-                        android:layout_height="20dp"
+                        android:layout_width="18dp"
+                        android:layout_height="18dp"
                         android:src="@android:drawable/ic_menu_more"
                         app:tint="#94A3B8" />
                 </LinearLayout>
@@ -645,7 +678,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="32dp"
             android:gravity="center"
             android:text="LensAI v1.0  •  Powered by ML Kit &amp; Firebase"
             android:textColor="#94A3B8"

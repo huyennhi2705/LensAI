@@ -117,12 +117,12 @@
                         app:cornerRadius="18dp" />
                 </LinearLayout>
 
+                <!-- Thời gian thực khi chụp (set từ code) -->
                 <TextView
                     android:id="@+id/tvDetailTime"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="04 Oct 2026  •  15:30"
                     android:textColor="#94A3B8"
                     android:textSize="13sp" />
 
@@ -187,7 +187,7 @@
                             android:textSize="14sp" />
 
                         <TextView
-                            android:id="@+id/tvDetailDesc"
+                            android:id="@+id/tvDesc"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="8dp"
@@ -203,7 +203,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="12dp"
-                    android:layout_marginBottom="16dp"
                     app:cardBackgroundColor="#FFFFFF"
                     app:cardCornerRadius="20dp"
                     app:cardElevation="3dp"
@@ -235,6 +234,45 @@
                             android:textSize="16sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
+
+                <!-- Chat with AI -->
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:layout_marginBottom="16dp"
+                    app:cardBackgroundColor="#FFFFFF"
+                    app:cardCornerRadius="20dp"
+                    app:cardElevation="3dp"
+                    app:strokeColor="#E2E8F0"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="sans-serif-medium"
+                            android:text="Chat with AI"
+                            android:textColor="#0F172A"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/tvDetailChat"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="8dp"
+                            android:lineSpacingExtra="4dp"
+                            android:textColor="#334155"
+                            android:textIsSelectable="true"
+                            android:textSize="16sp" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
 

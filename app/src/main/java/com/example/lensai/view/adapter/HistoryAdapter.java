@@ -1,7 +1,7 @@
 package com.example.lensai.view.adapter;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import static android.text.TextUtils.isEmpty;
+
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.lensai.R;
 import com.example.lensai.model.ScanHistory;
+import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -39,7 +40,9 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     public void setData(List<ScanHistory> data) {
         list.clear();
-        if (data != null) list.addAll(data);
+        if (data != null) {
+            list.addAll(data);
+        }
         notifyDataSetChanged();
     }
 
@@ -51,19 +54,30 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
         return new ViewHolder(v);
     }
 
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int position) {
         ScanHistory item = list.get(position);
 
+        // Tên vật thể
         h.tvLabel.setText(item.labelEn != null ? item.labelEn : "Unknown");
-        h.tvDesc.setText(item.description != null ? item.description : "");
+
+        // Mô tả vật thể: ưu tiên tiếng Anh
+        String desc = !isEmpty(item.descriptionEn) ? item.descriptionEn
+                : !isEmpty(item.descriptionVi) ? item.descriptionVi
+                  : !isEmpty(item.description) ? item.description : "";
+        h.tvDesc.setText(desc);
+        // Thời gian nhận diện
         h.tvTime.setText(sdf.format(new Date(item.timestamp)));
 
-        // Hiện ảnh từ Base64 (không còn imageUrl)
+        // Hiển thị ảnh (Giải mã trực tiếp từ Base64)
         if (item.imageBase64 != null && !item.imageBase64.isEmpty()) {
             try {
                 byte[] bytes = Base64.decode(item.imageBase64, Base64.DEFAULT);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
+                // Tự giải mã byte[] thành Bitmap
+                android.graphics.Bitmap bitmap = android.graphics.BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+
                 if (bitmap != null) {
                     h.ivThumb.setImageBitmap(bitmap);
                 } else {
@@ -76,31 +90,38 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
             h.ivThumb.setImageResource(android.R.drawable.ic_menu_gallery);
         }
 
+        // Xóa lịch sử
         h.btnDelete.setOnClickListener(v -> {
-            if (listener != null) listener.onDelete(item);
+            if (listener != null) {
+                listener.onDelete(item);
+            }
         });
 
+        // Xem chi tiết lịch sử
         h.itemView.setOnClickListener(v -> {
-            if (listener != null) listener.onClick(item);
+            if (listener != null) {
+                listener.onClick(item);
+            }
         });
     }
-
     @Override
     public int getItemCount() {
         return list.size();
     }
-
+    private static boolean isEmpty(String s) {
+        return s == null || s.isEmpty();
+    }
     static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView ivThumb;
         TextView tvLabel, tvDesc, tvTime;
-        ImageButton btnDelete;
+        ImageView btnDelete;
 
         ViewHolder(View v) {
             super(v);
-            ivThumb = v.findViewById(R.id.ivThumb);
-            tvLabel = v.findViewById(R.id.tvLabel);
+            ivThumb = v.findViewById(R.id.imgThumbnail);
+            tvLabel = v.findViewById(R.id.tvObjectName);
             tvDesc = v.findViewById(R.id.tvDesc);
-            tvTime = v.findViewById(R.id.tvTime);
+            tvTime = v.findViewById(R.id.tvDate);
             btnDelete = v.findViewById(R.id.btnDelete);
         }
     }

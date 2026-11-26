@@ -24,11 +24,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/** Trang chi tiết của một lần quét. Mở bằng intent.putExtra(EXTRA_ID, scanId). */
 public class HistoryDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_ID = "extra_scan_id";
-
+    private TextView tvDetailChat;
     private final HistoryRepository repo = new HistoryRepository();
 
     private ImageView ivDetail;
@@ -49,14 +48,14 @@ public class HistoryDetailActivity extends AppCompatActivity {
         ivDetail = findViewById(R.id.ivDetail);
         tvDetailLabel = findViewById(R.id.tvDetailLabel);
         tvDetailTime = findViewById(R.id.tvDetailTime);
-        tvDetailDesc = findViewById(R.id.tvDetailDesc);
+        tvDetailDesc = findViewById(R.id.tvDesc);
         tvDetailObjects = findViewById(R.id.tvDetailObjects);
         chipCategory = findViewById(R.id.chipCategory);
         chipConfidence = findViewById(R.id.chipConfidence);
         chipCount = findViewById(R.id.chipCount);
         btnDetailLang = findViewById(R.id.btnDetailLang);
         progressDetail = findViewById(R.id.progressDetail);
-
+        tvDetailChat = findViewById(R.id.tvDetailChat);
         scanId = getIntent().getStringExtra(EXTRA_ID);
         if (scanId == null || scanId.isEmpty()) {
             finish();
@@ -91,30 +90,30 @@ public class HistoryDetailActivity extends AppCompatActivity {
                     if (gone()) return;
                     progressDetail.setVisibility(View.GONE);
                     Toast.makeText(this,
-                            "Không tải được chi tiết: " + e.getMessage(),
+                            "Unable to load details: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
                     finish();
                 });
     }
 
     private void bindImage(@Nullable String base64) {
-        Bitmap bmp = null;
         if (base64 != null && !base64.isEmpty()) {
             try {
                 byte[] bytes = Base64.decode(base64, Base64.DEFAULT);
-                bmp = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            } catch (Exception ignored) {
-                // ảnh hỏng -> dùng ảnh mặc định
+                com.bumptech.glide.Glide.with(this)
+                        .load(bytes)
+                        .placeholder(android.R.drawable.ic_menu_gallery)
+                        .error(android.R.drawable.ic_menu_gallery)
+                        .into(ivDetail);
+
+            } catch (Exception e) {
+                ivDetail.setImageResource(android.R.drawable.ic_menu_gallery);
             }
-        }
-        if (bmp != null) {
-            ivDetail.setImageBitmap(bmp);
         } else {
             ivDetail.setImageResource(android.R.drawable.ic_menu_gallery);
         }
     }
 
-    /** Hiển thị đúng ngôn ngữ đang chọn. */
     private void render() {
         if (current == null) return;
 
@@ -128,6 +127,7 @@ public class HistoryDetailActivity extends AppCompatActivity {
         tvDetailLabel.setText(label);
         tvDetailDesc.setText(desc);
         tvDetailObjects.setText(objects);
+        tvDetailChat.setText(buildChatText());
         btnDetailLang.setText(showingVietnamese ? "English" : "Tiếng Việt");
 
         if (current.timestamp > 0) {
@@ -150,7 +150,19 @@ public class HistoryDetailActivity extends AppCompatActivity {
 
         chipCount.setText(current.objectCount + (current.objectCount == 1 ? " object" : " objects"));
     }
-
+    private String buildChatText() {
+        if (current.chatHistory == null || current.chatHistory.isEmpty()) {
+            return "No conversations yet.";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (com.example.lensai.model.ChatMessage m : current.chatHistory) {
+            String ans = pick(showingVietnamese ? m.answerVi : m.answerEn,
+                    showingVietnamese ? m.answerEn : m.answerVi, "—");
+            if (sb.length() > 0) sb.append("\n\n");
+            sb.append("🙋 ").append(m.question).append("\n🤖 ").append(ans);
+        }
+        return sb.toString();
+    }
     private void confirmDelete() {
         new AlertDialog.Builder(this)
                 .setTitle("Delete this scan?")
@@ -160,12 +172,12 @@ public class HistoryDetailActivity extends AppCompatActivity {
                         repo.deleteScan(scanId,
                                 unused -> {
                                     if (gone()) return;
-                                    Toast.makeText(this, "Đã xóa", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
                                     finish();
                                 },
                                 e -> {
                                     if (gone()) return;
-                                    Toast.makeText(this, "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(this, "Deletion failed", Toast.LENGTH_SHORT).show();
                                 }))
                 .show();
     }

@@ -24,31 +24,17 @@ public class FirebaseUtils {
     public static String uid() {
         return GUEST_ID;
     }
-
-    // ==================== LƯU LỊCH SỬ ====================
-    public static void saveScanHistory(String label, String description, String imageUrl, float accuracy,
-                                       OnCompleteListener<Void> listener) {
-
+    public static void saveScanHistory(String label, String description, String imageUrl, float accuracy, OnCompleteListener<Void> listener) {
         ScanHistoryItem item = new ScanHistoryItem(label, description, imageUrl, accuracy);
-
         DatabaseReference ref = db()
-                .child("scan_history")
-                .child(uid())
-                .push();          // tạo key tự động
-
-        item.id = ref.getKey();   // gán id vào object
-
-        ref.setValue(item)
-                .addOnCompleteListener(listener);
+                .child("scan_history").child(uid()).push();
+        item.id = ref.getKey();
+        ref.setValue(item).addOnCompleteListener(listener);
     }
-
-    // Phiên bản đơn giản (không cần listener)
     public static void saveScanHistory(String label, String description, String imageUrl, float accuracy) {
         saveScanHistory(label, description, imageUrl, accuracy, task -> {
             if (task.isSuccessful()) {
-                // Lưu thành công
             } else {
-                // Lỗi
             }
         });
     }

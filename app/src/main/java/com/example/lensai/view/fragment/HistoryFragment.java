@@ -1,5 +1,6 @@
 package com.example.lensai.view.fragment;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,11 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.lensai.R;
 import com.example.lensai.controller.HistoryController;
 import com.example.lensai.model.ScanHistory;
+import com.example.lensai.view.activity.HistoryDetailActivity;
 import com.example.lensai.view.adapter.HistoryAdapter;
 
 import java.util.List;
-import android.content.Intent;
-import com.example.lensai.view.activity.HistoryDetailActivity;
+
 public class HistoryFragment extends Fragment {
 
     private RecyclerView rvHistory;
@@ -37,12 +38,10 @@ public class HistoryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_history, container, false);
-
         rvHistory = v.findViewById(R.id.rvHistory);
         progress = v.findViewById(R.id.progressHistory);
         emptyState = v.findViewById(R.id.emptyState);
         tvHistoryCount = v.findViewById(R.id.tvHistoryCount);
-
         adapter = new HistoryAdapter(new HistoryAdapter.OnItemClickListener() {
             @Override
             public void onDelete(ScanHistory item) {
@@ -56,7 +55,6 @@ public class HistoryFragment extends Fragment {
                 intent.putExtra(HistoryDetailActivity.EXTRA_ID, item.id);
                 startActivity(intent);
             }
-
         });
 
         rvHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
@@ -88,18 +86,20 @@ public class HistoryFragment extends Fragment {
                 progress.setVisibility(View.GONE);
 
                 adapter.setData(list);
-                tvHistoryCount.setText(list.size() + " mục đã lưu");
+                tvHistoryCount.setText(getString(R.string.history_count, list.size()));
 
-                emptyState.setVisibility(list.isEmpty() ? View.VISIBLE : View.GONE);
-                rvHistory.setVisibility(list.isEmpty() ? View.GONE : View.VISIBLE);
+                boolean empty = list.isEmpty();
+                emptyState.setVisibility(empty ? View.VISIBLE : View.GONE);
+                rvHistory.setVisibility(empty ? View.GONE : View.VISIBLE);
             }
 
             @Override
             public void onError(Exception e) {
                 if (!isAdded()) return;
                 progress.setVisibility(View.GONE);
+                String msg = e != null && e.getMessage() != null ? e.getMessage() : "";
                 Toast.makeText(requireContext(),
-                        "Lỗi tải lịch sử: " + e.getMessage(),
+                        getString(R.string.history_load_error, msg),
                         Toast.LENGTH_LONG).show();
             }
         });
@@ -109,12 +109,14 @@ public class HistoryFragment extends Fragment {
         controller.delete(item,
                 unused -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Đã xóa", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(),
+                                R.string.history_deleted, Toast.LENGTH_SHORT).show();
                     }
                 },
                 e -> {
                     if (isAdded()) {
-                        Toast.makeText(requireContext(), "Xóa thất bại", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(requireContext(),
+                                R.string.history_delete_failed, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

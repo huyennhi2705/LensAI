@@ -2,79 +2,46 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F5F9">
-    <!-- ========== HEADER ========== -->
+    android:background="#F8FAFC">
+
+    <!-- Header -->
     <LinearLayout
         android:id="@+id/header"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#FFFFFF"
-        android:elevation="4dp"
         android:orientation="vertical"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="40dp"
-        android:paddingBottom="20dp"
+        android:paddingHorizontal="24dp"
+        android:paddingTop="28dp"
+        android:paddingBottom="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
+            android:fontFamily="sans-serif-black"
+            android:text="@string/history_title"
+            android:textColor="#0F172A"
+            android:textSize="26sp" />
 
-            <!-- Icon trong ô xanh bo tròn -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="56dp"
-                android:layout_height="56dp"
-                app:cardBackgroundColor="#2563EB"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="0dp"
-                app:strokeWidth="0dp">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/history_subtitle"
+            android:textColor="#64748B"
+            android:textSize="13sp" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:importantForAccessibility="no"
-                    android:padding="8dp"
-                    android:src="@drawable/ic_lens_hero" />
-            </com.google.android.material.card.MaterialCardView>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="14dp"
-                android:layout_weight="1"
-                android:orientation="vertical">
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-black"
-                    android:text="Scan History"
-                    android:textColor="#0F172A"
-                    android:textSize="24sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="2dp"
-                    android:text="Everything LensAI has recognized for you"
-                    android:textColor="#64748B"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <!-- Chip đếm số mục -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="14dp"
             app:cardBackgroundColor="#EFF6FF"
-            app:cardCornerRadius="16dp"
+            app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
             app:strokeColor="#BFDBFE"
             app:strokeWidth="1dp">
@@ -84,17 +51,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="7dp"
-                android:text="🗂️  0 items saved"
+                android:paddingHorizontal="14dp"
+                android:paddingVertical="6dp"
                 android:textColor="#1D4ED8"
-                android:textSize="13sp" />
+                android:textSize="13sp"
+                tools:text="🗂️  13 saved items" />
         </com.google.android.material.card.MaterialCardView>
     </LinearLayout>
 
-
-
-    <!-- ========== EMPTY STATE ========== -->
+    <!-- Trạng thái trống -->
     <LinearLayout
         android:id="@+id/emptyState"
         android:layout_width="0dp"
@@ -102,7 +67,6 @@
         android:gravity="center"
         android:orientation="vertical"
         android:paddingHorizontal="40dp"
-        android:paddingVertical="32dp"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -111,55 +75,53 @@
         app:layout_constraintVertical_bias="0.35">
 
         <TextView
-            android:layout_width="120dp"
-            android:layout_height="120dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:background="@drawable/bg_empty_circle"
-            android:elevation="2dp"
             android:gravity="center"
             android:text="📋"
-            android:textSize="52sp" />
+            android:textSize="44sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="28dp"
+            android:layout_marginTop="24dp"
             android:fontFamily="sans-serif-medium"
-            android:text="No history yet"
+            android:text="@string/history_empty_title"
             android:textColor="#0F172A"
-            android:textSize="20sp" />
+            android:textSize="18sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:gravity="center"
-            android:lineSpacingExtra="4dp"
-            android:text="Capture and save your first object\nto see it appear here!"
+            android:lineSpacingExtra="3dp"
+            android:text="@string/history_empty_desc"
             android:textColor="#64748B"
             android:textSize="14sp" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnEmptyScan"
             android:layout_width="wrap_content"
-            android:layout_height="52dp"
-            android:layout_marginTop="32dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="28dp"
             android:insetTop="0dp"
             android:insetBottom="0dp"
-            android:paddingHorizontal="32dp"
-            android:text="Start Scanning"
+            android:paddingHorizontal="28dp"
+            android:text="@string/history_start_scan"
             android:textAllCaps="false"
             android:textSize="15sp"
             android:textStyle="bold"
             app:backgroundTint="#2563EB"
-            app:cornerRadius="26dp"
-            app:elevation="3dp"
+            app:cornerRadius="25dp"
             app:icon="@android:drawable/ic_menu_camera"
             app:iconGravity="textStart"
-            app:iconPadding="10dp"
+            app:iconPadding="8dp"
             app:iconTint="#FFFFFF" />
     </LinearLayout>
 
-    <!-- ========== LIST ========== -->
+    <!-- Danh sách -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvHistory"
         android:layout_width="0dp"
@@ -167,8 +129,8 @@
         android:clipToPadding="false"
         android:overScrollMode="never"
         android:paddingHorizontal="16dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="32dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -176,8 +138,8 @@
 
     <ProgressBar
         android:id="@+id/progressHistory"
-        android:layout_width="44dp"
-        android:layout_height="44dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:indeterminateTint="#2563EB"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"

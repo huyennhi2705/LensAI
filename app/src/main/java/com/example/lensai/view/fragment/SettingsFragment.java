@@ -1,66 +1,126 @@
 package com.example.lensai.view.fragment;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+
+import com.example.lensai.BuildConfig;
 import com.example.lensai.R;
+import com.example.lensai.utils.SettingsManager;
+import com.google.android.material.materialswitch.MaterialSwitch;
+import com.google.android.material.slider.Slider;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
-/**
- * A simple {@link Fragment} subclass.
- * Use the {@link SettingsFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
+import java.util.Locale;
+
 public class SettingsFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private SettingsManager settings;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private MaterialSwitch switchAutoSpeak, switchAutoSave, switchHighAccuracy;
+    private Slider sliderSpeechRate;
+    private TextView tvSpeechRateValue, tvAppVersion;
 
-    public SettingsFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment SettingsFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static SettingsFragment newInstance(String param1, String param2) {
-        SettingsFragment fragment = new SettingsFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
-
+    @Nullable
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_settings, container, false);
+        settings = new SettingsManager(requireContext());
+        switchAutoSpeak = v.findViewById(R.id.switchAutoSpeak);
+        switchAutoSave = v.findViewById(R.id.switchAutoSave);
+        switchHighAccuracy = v.findViewById(R.id.switchHighAccuracy);
+        sliderSpeechRate = v.findViewById(R.id.sliderSpeechRate);
+        tvSpeechRateValue = v.findViewById(R.id.tvSpeechRateValue);
+        tvAppVersion = v.findViewById(R.id.tvAppVersion);
+        View btnClearHistory = v.findViewById(R.id.btnClearHistory);
+        View btnSyncFirebase = v.findViewById(R.id.btnSyncFirebase);
+        View btnPrivacy = v.findViewById(R.id.btnPrivacy);
+        View btnRateApp = v.findViewById(R.id.btnRateApp);
+        if (tvAppVersion != null) {
+            tvAppVersion.setText("LensAI v" + BuildConfig.VERSION_NAME);
         }
+        switchAutoSpeak.setChecked(settings.isAutoSpeak());
+        switchAutoSave.setChecked(settings.isAutoSave());
+        switchHighAccuracy.setChecked(settings.isHighAccuracy());
+        float currentRate = settings.getSpeechRate();
+        sliderSpeechRate.setValue(currentRate);
+        updateSpeechRateText(currentRate);
+        switchAutoSpeak.setOnCheckedChangeListener((buttonView, isChecked) -> settings.setAutoSpeak(isChecked));
+        switchAutoSave.setOnCheckedChangeListener((buttonView, isChecked) -> settings.setAutoSave(isChecked));
+        switchHighAccuracy.setOnCheckedChangeListener((buttonView, isChecked) -> settings.setHighAccuracy(isChecked));
+        sliderSpeechRate.addOnChangeListener((slider, value, fromUser) -> {
+            settings.setSpeechRate(value);
+            updateSpeechRateText(value);
+        });
+        if (btnClearHistory != null) {
+            btnClearHistory.setOnClickListener(view -> showClearHistoryDialog());
+        }
+
+        if (btnSyncFirebase != null) {
+            btnSyncFirebase.setOnClickListener(view ->
+                    Toast.makeText(requireContext(), "Data has been automatically synced to Firebase.", Toast.LENGTH_SHORT).show()
+            );
+        }
+        if (btnPrivacy != null) {
+            btnPrivacy.setOnClickListener(view -> showPrivacyPolicy());
+        }
+        if (btnRateApp != null) {
+            btnRateApp.setOnClickListener(view -> {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + requireContext().getPackageName())));
+                } catch (Exception e) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + requireContext().getPackageName())));
+                }
+            });
+        }
+        return v;
+    }
+    private void updateSpeechRateText(float rate) {
+        String text;
+        if (rate < 0.8f) text = "Slow";
+        else if (rate < 1.2f) text = "Normal";
+        else text = "Fast";
+
+        tvSpeechRateValue.setText(String.format(Locale.US, "%s (%.1fx)", text, rate));
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_settings, container, false);
+    private void showClearHistoryDialog() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Clear history")
+                .setMessage("Are you sure you want to delete your entire scan history? This action cannot be undone..")
+                .setPositiveButton("Delete", (dialog, which) -> clearHistory())
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    private void clearHistory() {
+        String uid = FirebaseAuth.getInstance().getCurrentUser() != null
+                ? FirebaseAuth.getInstance().getCurrentUser().getUid() : "anonymous";
+
+        FirebaseDatabase.getInstance("https://lensai-97dc7-default-rtdb.firebaseio.com/")
+                .getReference("scan_history").child(uid)
+                .removeValue()
+                .addOnSuccessListener(aVoid -> Toast.makeText(requireContext(), "Entire history deleted!", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(requireContext(), "Deletion error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
+
+    private void showPrivacyPolicy() {
+        new AlertDialog.Builder(requireContext())
+                .setTitle("Privacy Policy")
+                .setMessage("LensAI is committed to protecting your data. Images and scan results are stored securely within your own personal Firebase instance and are never shared with third parties.")
+                .setPositiveButton("Understood", null)
+                .show();
     }
 }

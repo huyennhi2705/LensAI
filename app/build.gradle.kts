@@ -83,7 +83,7 @@ dependencies {
     // Room (nếu muốn offline local)
     implementation("androidx.room:room-runtime:2.6.1")
     annotationProcessor("androidx.room:room-compiler:2.6.1")
-
+    implementation("com.github.bumptech.glide:glide:4.16.0")
     // Khác
     implementation("com.squareup.picasso:picasso:2.8")
     implementation("com.google.guava:guava:33.3.1-android")

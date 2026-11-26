@@ -68,13 +68,7 @@ public class ScanHistoryItem {
 
     @Override
     public String toString() {
-        return "ScanHistoryItem{" +
-                "id='" + id + '\'' +
-                ", label='" + label + '\'' +
-                ", description='" + description + '\'' +
-                ", imageUrl='" + imageUrl + '\'' +
-                ", timestamp=" + timestamp +
-                ", accuracy=" + accuracy +
-                '}';
+        return "ScanHistoryItem{" + "id='" + id + '\'' + ", label='" + label + '\'' + ", description='" + description + '\'' +
+                ", imageUrl='" + imageUrl + '\'' + ", timestamp=" + timestamp + ", accuracy=" + accuracy + '}';
     }
 }

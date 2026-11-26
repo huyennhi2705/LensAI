@@ -1,5 +1,45 @@
 <resources>
     <string name="app_name">LensAI</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="auth_subtitle">Object recognition using AI</string>
+    <string name="auth_login">Log in</string>
+    <string name="auth_register">Sign Up</string>
+    <string name="auth_to_register">Don\'t have an account? Sign up</string>
+    <string name="auth_to_login">Already have an account? Log in</string>
+    <string name="label_email">Email</string>
+    <string name="label_password">Password</string>
+    <string name="hint_full_name">Full name</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="remember_login">Remember login</string>
+    <string name="msg_empty_email_password">Please enter your email and password</string>
+    <string name="msg_password_short">The password must be at least 6 characters long</string>
+    <string name="msg_empty_full_name">Please enter your full name</string>
+    <string name="msg_login_success">Login successful</string>
+    <string name="msg_login_failed">Login failed: %1$s</string>
+    <string name="msg_register_success">Registration successful</string>
+    <string name="msg_register_failed">Registration failed: %1$s</string>
+    <string name="msg_save_failed">Failed to save information: %1$s</string>
+    <string name="register_subtitle">Create an account to start identifying objects</string>
+    <string name="hint_confirm_password">Re-enter password</string>
+    <string name="have_account">Already have an account? Log in</string>
+    <string name="err_full_name">Please enter your full name</string>
+    <string name="err_email_empty">Please enter email</string>
+    <string name="err_email_invalid">Invalid email</string>
+    <string name="err_password_short">Minimum password length is 6 characters</string>
+    <string name="err_password_mismatch">The re-entered password does not match</string>
+    <string name="history_badge">Recognized</string>
+    <string name="history_image_desc">Object image</string>
+    <string name="history_delete_desc">Delete</string>
+    <!-- History -->
+    <string name="history_title">Scan History</string>
+    <string name="history_subtitle">Everything LensAI has recognized for you</string>
+    <string name="history_count">🗂️  %1$d saved items</string>
+    <string name="history_empty_title">No history yet</string>
+    <string name="history_empty_desc">Capture and save your first object\nto see it appear here!</string>
+    <string name="history_start_scan">Start Scanning</string>
+
+    <string name="history_deleted">Deleted</string>
+    <string name="history_delete_failed">Deletion failed</string>
+    <string name="history_load_error">Error loading history: %1$s</string>
 </resources>

@@ -4,15 +4,24 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <uses-feature
         android:name="android.hardware.camera"
         android:required="true" />
+
     <queries>
         <intent>
             <action android:name="android.intent.action.TTS_SERVICE" />
         </intent>
     </queries>
+
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,31 +30,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.LensAI"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".view.activity.SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.LensAI">
+            android:theme="@style/Theme.LensAI.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".MainActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activity.HistoryDetailActivity"
             android:exported="false" />
-        <activity
-            android:name=".view.activity.AuthActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".view.activity.RegisterActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+
     </application>
 
 </manifest>

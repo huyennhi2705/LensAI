@@ -13,7 +13,6 @@ public class HybridResult {
     public int objectCount = 0;
     public String objectsListEn = "";
     public String objectsListVi = "";
-    /** gemini | tflite | hybrid | none */
     public String source = "gemini";
     public String tfliteHint = "";
     public String rawGeminiJson = "";

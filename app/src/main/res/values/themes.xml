@@ -9,6 +9,6 @@
     </style>
 
     <style name="Theme.LensAI.Splash" parent="Theme.LensAI">
-        <item name="android:windowBackground">@color/primary</item>
+        <item name="android:windowBackground">@drawable/bg_splash</item>
     </style>
 </resources>

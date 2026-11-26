@@ -16,7 +16,7 @@ import java.util.List;
 public class BoundingBoxView extends View {
 
     public static class DetectionBox {
-        public RectF rect; // Tọa độ đã được scale theo kích thước View
+        public RectF rect;
         public String label;
         public float confidence;
         public int color;
@@ -42,12 +42,12 @@ public class BoundingBoxView extends View {
     private void init() {
         boxPaint = new Paint();
         boxPaint.setStyle(Paint.Style.STROKE);
-        boxPaint.setStrokeWidth(6f); // Độ dày của khung
+        boxPaint.setStrokeWidth(8f);
         boxPaint.setAntiAlias(true);
 
         textPaint = new Paint();
         textPaint.setColor(Color.WHITE);
-        textPaint.setTextSize(36f);
+        textPaint.setTextSize(45f);
         textPaint.setAntiAlias(true);
         textPaint.setFakeBoldText(true);
 
@@ -55,7 +55,6 @@ public class BoundingBoxView extends View {
         bgPaint.setStyle(Paint.Style.FILL);
         bgPaint.setAntiAlias(true);
     }
-
     public void setBoxes(List<DetectionBox> boxes) {
         this.boxes = boxes;
         invalidate(); // Vẽ lại
@@ -74,7 +73,7 @@ public class BoundingBoxView extends View {
             boxPaint.setColor(box.color);
             canvas.drawRect(box.rect, boxPaint);
 
-            // Vẽ nhãn (label + confidence)
+            // Vẽ nhãn
             String text = box.label + " " + String.format("%.2f", box.confidence);
             float textWidth = textPaint.measureText(text);
             float textHeight = textPaint.descent() - textPaint.ascent();

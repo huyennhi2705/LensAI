@@ -43,4 +43,7 @@
     <!-- Màu nhấn (Xanh lá pastel hoặc Cam đào) -->
     <color name="accent_green">#A8D5BA</color>
     <color name="accent_peach">#FFB4A2</color>
+    <color name="splash_bg">#FFF1F6</color>
+    <color name="splash_pink">#E6CAD2</color>
+    <color name="splash_text">#FF5E5E</color>
 </resources>

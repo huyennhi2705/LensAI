@@ -1,6 +1,7 @@
 package com.example.lensai;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -10,6 +11,7 @@ import com.example.lensai.view.fragment.HomeFragment;
 import com.example.lensai.view.fragment.ScanFragment;
 import com.example.lensai.view.fragment.SettingsFragment;
 import com.example.lensai.view.fragment.StatisticsFragment;
+import com.example.lensai.voice.TtsManager;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class MainActivity extends AppCompatActivity {
@@ -57,5 +59,10 @@ public class MainActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             nav.setSelectedItemId(R.id.nav_home);
         }
+        TtsManager.get().init(getApplicationContext(), (ok, msg) -> {
+            if (!ok) {
+                Toast.makeText(this, "TTS lỗi: " + msg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

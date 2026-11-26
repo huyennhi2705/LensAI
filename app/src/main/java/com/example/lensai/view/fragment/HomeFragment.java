@@ -34,25 +34,13 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        // Chú ý: Đảm bảo file XML mới của bạn tên là fragment_home.xml
         View v = inflater.inflate(R.layout.fragment_home, container, false);
-
-        // 1. Ánh xạ các thành phần giao diện cơ bản
         tvGreeting = v.findViewById(R.id.tvGreeting);
         tvUserName = v.findViewById(R.id.tvUserName);
-
-        // 2. Bắt sự kiện click cho nút Bắt đầu quét
-        View btnStartScan = v.findViewById(R.id.btnStartScan);
-        if (btnStartScan != null) {
-            btnStartScan.setOnClickListener(x -> navigateTo(NAV_SCAN));
-        }
-
-        // 3. Xử lý sự kiện click vào Avatar (nếu bạn muốn mở Profile)
         View tvAvatar = v.findViewById(R.id.tvAvatar);
         if (tvAvatar != null) {
             tvAvatar.setOnClickListener(x -> {
-                // navigateTo(new String[]{"nav_profile"}); // Mở trang cá nhân nếu có
-                Toast.makeText(requireContext(), "Tính năng đang phát triển", Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), "Feature under development", Toast.LENGTH_SHORT).show();
             });
         }
 
@@ -63,10 +51,8 @@ public class HomeFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        bindUser(); // Cập nhật lại tên mỗi khi quay lại màn hình
+        bindUser();
     }
-
-    // Lấy thông tin người dùng từ Firebase
     private void bindUser() {
         if (tvGreeting != null) tvGreeting.setText(greeting());
         if (tvUserName == null) return;
@@ -105,7 +91,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
-                android.util.Log.e("HomeFragment", "Không thể lấy tên người dùng: " + error.getMessage());
+                android.util.Log.e("HomeFragment", "Unable to retrieve username: " + error.getMessage());
             }
         });
     }
@@ -113,11 +99,9 @@ public class HomeFragment extends Fragment {
     // Tạo lời chào theo thời gian thực
     private String greeting() {
         int hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        String part = hour < 12 ? "Chào buổi sáng," : (hour < 18 ? "Chào buổi chiều," : "Chào buổi tối,");
+        String part = hour < 12 ? "Good morning," : (hour < 18 ? "Good afternoon," : "Good evening,");
         return part + " 👋";
     }
-
-    // Điều hướng sang màn hình quét (Camera)
     private void navigateTo(String[] menuIdNames) {
         String pkg = requireContext().getPackageName();
         int navId = getResources().getIdentifier(NAV_VIEW_ID, "id", pkg);
@@ -132,6 +116,6 @@ public class HomeFragment extends Fragment {
                 }
             }
         }
-        Toast.makeText(requireContext(), "Đang mở Camera...", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Opening Camera...", Toast.LENGTH_SHORT).show();
     }
 }

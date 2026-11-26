@@ -11,8 +11,6 @@ public class ScanHistory {
 
     @Exclude
     public String id;
-
-    // ===== Các trường theo bảng scan_history =====
     @PropertyName("user_id")
     public String userId;
 
@@ -41,8 +39,9 @@ public class ScanHistory {
     public String type;
     public float confidence;
 
+
     @PropertyName("object_count")
-    public int objectCount;
+    public long objectCount;
 
     @PropertyName("objects_list_en")
     public String objectsListEn;
@@ -62,4 +61,17 @@ public class ScanHistory {
     public ScanHistory() {
         // bắt buộc cho Firebase
     }
+    @Exclude
+    public java.util.List<ChatMessage> chatHistory = new java.util.ArrayList<>();
+    @PropertyName("input_type")
+    public String inputType;
+
+    @PropertyName("detect_ms")
+    public long detectMs;
+
+    @PropertyName("speak_count")
+    public long speakCount;
+
+    @PropertyName("chat_count")
+    public long chatCount;
 }
